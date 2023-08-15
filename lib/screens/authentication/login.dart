@@ -1,13 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:t_hunt/controllers/auth_controller.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
+
+  void onSignup() {
+    ref.read(authControllerProvider.notifier).signUp(
+        email: _emailController.text,
+        password: _passwordController.text,
+        context: context);
+    print('object');
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final maxWidth = 400.0;
-    final TextEditingController _usernameController = TextEditingController();
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -59,6 +83,8 @@ class LoginPage extends StatelessWidget {
                             onPressed: () {},
                             child: Text('Login'),
                           ),
+                          TextButton(
+                              onPressed: onSignup, child: Text("Sign Up"))
                         ],
                       )),
                 ],

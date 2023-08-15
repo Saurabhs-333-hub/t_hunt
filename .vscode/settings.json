@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/t_hunt/linux"
+    "cmake.sourceDirectory": "D:/t_hunt/linux",
+    "terminal.integrated.tabs.hideCondition": "singleTerminal",
 }

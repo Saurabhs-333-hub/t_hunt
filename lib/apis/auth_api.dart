@@ -1,5 +1,5 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
+import 'package:appwrite/models.dart' as model;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:t_hunt/core/failure.dart';
@@ -10,10 +10,11 @@ final authAPIProvider =
     Provider((ref) => AuthAPI(account: ref.watch(appwriteAccountProvider)));
 
 abstract class IAuthAPI {
-  FutureEither<User> signUp({required String email, required String password});
-  FutureEither<Session> signIn(
+  FutureEither<model.Account> signUp(
       {required String email, required String password});
-  Future<User?> currentUserAccount();
+  FutureEither<model.Session> signIn(
+      {required String email, required String password});
+  Future<model.Account?> currentUserAccount();
 }
 
 class AuthAPI implements IAuthAPI {
@@ -21,7 +22,7 @@ class AuthAPI implements IAuthAPI {
   AuthAPI({required Account account}) : _account = account;
 
   @override
-  Future<User?> currentUserAccount() async {
+  Future<model.Account?> currentUserAccount() async {
     try {
       return await _account.get();
     } catch (e) {
@@ -30,7 +31,7 @@ class AuthAPI implements IAuthAPI {
   }
 
   @override
-  FutureEither<User> signUp(
+  FutureEither<model.Account> signUp(
       {required String email, required String password}) async {
     try {
       final account = await _account.create(
@@ -45,7 +46,7 @@ class AuthAPI implements IAuthAPI {
   }
 
   @override
-  FutureEither<Session> signIn(
+  FutureEither<model.Session> signIn(
       {required String email, required String password}) async {
     try {
       final account =

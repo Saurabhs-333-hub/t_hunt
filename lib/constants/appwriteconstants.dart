@@ -5,7 +5,7 @@ class AppwriteConstants {
   static const String projectId = '64d941d8d2058e918682';
   static const String backupprojectId = '64d9484205ac1a66b919';
 
-  static const String endPoint = 'https://localhost:80/v1';
+  static const String endPoint = 'https://192.168.230.222:443/v1';
 
   static const String usersCollectionbackup = '64d948680c567d228d6d';
   static const String usersCollection = '64d9485a9ab00c284247';
