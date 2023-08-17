@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:t_hunt/controllers/auth_controller.dart';
+import 'package:t_hunt/core/export.dart';
 import 'package:t_hunt/screens/authentication/login.dart';
+import 'package:t_hunt/screens/home/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
+  @override
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,18 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginPage(),
+      home: ref.watch(currentUserProvider).when(
+          data: (data) {
+            if (data != null) {
+              return Home();
+            } else {
+              return LoginPage();
+            }
+          },
+          error: (e, st) {
+            showSnackBar(context, e.toString());
+          },
+          loading: () => Center(child: CircularProgressIndicator())),
     );
   }
 }

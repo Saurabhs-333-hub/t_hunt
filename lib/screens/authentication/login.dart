@@ -28,8 +28,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     print('object');
   }
 
+  void onSignIn() {
+    ref.read(authControllerProvider.notifier).signIn(
+        email: _emailController.text,
+        password: _passwordController.text,
+        context: context);
+    print('object');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(authControllerProvider);
     final screenHeight = MediaQuery.of(context).size.height;
     final maxWidth = 400.0;
     return Scaffold(
@@ -79,12 +88,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               labelText: 'Password',
                             ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {},
-                            child: Text('Login'),
-                          ),
-                          TextButton(
-                              onPressed: onSignup, child: Text("Sign Up"))
+                          isLoading
+                              ? Text("Logging In")
+                              : TextButton(
+                                  onPressed: onSignIn, child: Text("Login")),
+                          isLoading
+                              ? Text("Signing Up")
+                              : TextButton(
+                                  onPressed: onSignup, child: Text("Sign Up"))
                         ],
                       )),
                 ],
