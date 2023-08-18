@@ -51,7 +51,9 @@ class _MyAppState extends ConsumerState<MyApp> {
             }
           },
           error: (e, st) {
-            showSnackBar(context, e.toString());
+           return Dialog(
+              child: Text(e.toString()),
+            );
           },
           loading: () => Center(child: CircularProgressIndicator())),
     );

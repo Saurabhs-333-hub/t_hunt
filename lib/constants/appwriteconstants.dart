@@ -1,5 +1,5 @@
 class AppwriteConstants {
-  static const String databaseId = '64d94824cc5626bd02e8';
+  static const String databaseId = '64dae3af3fcfaec97b07';
   static const String backupdatabaseId = '64d941fca4e17df31cc1';
 
   static const String projectId = '64dae3614e25c5ce920d';
@@ -8,7 +8,7 @@ class AppwriteConstants {
   static const String endPoint = 'https://68.183.92.66:443/v1';
 
   static const String usersCollectionbackup = '64d948680c567d228d6d';
-  static const String usersCollection = '64d9485a9ab00c284247';
+  static const String usersCollection = '64dc2d5005f73d7e583c';
 
   static const String memoriesCollection = '6482cc639ea5db4e9457';
   static const String repliesCollection = '648c0efba7239b5a65f7';
