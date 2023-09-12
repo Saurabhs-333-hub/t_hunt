@@ -3,11 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
 import 'package:t_hunt/core/export.dart';
 import 'package:t_hunt/screens/authentication/login.dart';
+import 'package:t_hunt/screens/clips/create_clips.dart';
 import 'package:t_hunt/screens/home/home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(ProviderScope(child: MyApp()));
+  runApp(
+    UncontrolledProviderScope(
+      container: ProviderContainer(), // Create a ProviderContainer
+      child: MyApp(), // Your main app widget
+    ),
+  );
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -51,11 +57,12 @@ class _MyAppState extends ConsumerState<MyApp> {
             }
           },
           error: (e, st) {
-           return Dialog(
+            return Dialog(
               child: Text(e.toString()),
             );
           },
-          loading: () => Center(child: CircularProgressIndicator())),
+          loading: () =>
+              Scaffold(body: Center(child: CircularProgressIndicator()))),
     );
   }
 }

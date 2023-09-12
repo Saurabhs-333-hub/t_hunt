@@ -1,16 +1,17 @@
-import 'dart:async';
-
-import 'package:appwrite/appwrite.dart';
+// import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart' as model;
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
+// import 'package:fpdart/fpdart.dart';
+// import 'package:restart_app/restart_app.dart';
 import 'package:t_hunt/apis/auth_api.dart';
 import 'package:t_hunt/apis/user_api.dart';
+import 'package:t_hunt/core/auth.dart';
 import 'package:t_hunt/models/usermodel.dart';
-import 'package:t_hunt/screens/clips/median_screen.dart';
+import 'package:t_hunt/screens/authentication/login.dart';
+import 'package:t_hunt/screens/clips/create_clips.dart';
 import 'package:t_hunt/screens/home/home.dart';
+// import 'package:t_hunt/screens/home/home.dart';
 
 import '../core/export.dart';
 
@@ -22,17 +23,10 @@ final authControllerProvider =
 });
 
 final currentUserDetailsProvider = FutureProvider((ref) async {
-  return ref.watch(currentUserProvider).when(
-        data: (data) {
-          final currrentUserId = data!.$id;
-          print(currrentUserId);
-          final userDetails = ref.watch(userDetailsProvider(currrentUserId));
-          print("User Details $userDetails");
-          return userDetails.value;
-        },
-        error: (error, stackTrace) => Text(error.toString()),
-        loading: () => CircularProgressIndicator(),
-      );
+  final currrentUserId = ref.watch(currentUserProvider).value!.$id;
+  final userDetails = ref.watch(userDetailsProvider(currrentUserId));
+  print("User Details $userDetails");
+  return userDetails.value;
 });
 final userDetailsProvider = FutureProvider.family((ref, String uid) async {
   final authController = ref.watch(authControllerProvider.notifier);
@@ -63,7 +57,13 @@ class AuthController extends StateNotifier<bool> {
     state = true;
     _authAPI.signIn(email: email, password: password).then((res) {
       state = false;
-      res.fold((l) => showSnackBar(context, l.message), (r) {
+      // Auth.authenticated = true;
+      res.fold((l) {
+        print(l.message);
+        showSnackBar(context, l.message);
+      }, (r) {
+        // Restart.restartApp();
+        print(r);
         Navigator.of(context).push(CupertinoPageRoute(
           builder: (context) => Home(),
         ));
@@ -86,8 +86,10 @@ class AuthController extends StateNotifier<bool> {
         Usermodel usermodel =
             Usermodel(email: email, id: r.$id, name: "", password: password);
         final res2 = await _userAPI.saveUserData(usermodel);
-        res2.fold((l) => showSnackBar(context, l.message),
-            (r) => showSnackBar(context, "Account Created!"));
+        res2.fold((l) {
+          print(l.message);
+          showSnackBar(context, l.message);
+        }, (r) => showSnackBar(context, "Account Created!"));
       });
     } catch (e) {
       print(e);
@@ -100,5 +102,10 @@ class AuthController extends StateNotifier<bool> {
     return updatedUser;
   }
 
-  // void signOut() {}
+  void signOut(BuildContext context) async {
+    await _authAPI.signOut(context);
+    // Navigator.of(context).pushReplacement(CupertinoPageRoute(
+    //   builder: (context) => LoginPage(),
+    // ));
+  }
 }
