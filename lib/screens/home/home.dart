@@ -39,7 +39,7 @@ class _HomeState extends ConsumerState<Home> {
           ],
         ),
       )),
-      FeedScreen(),
+      CreateClips(),
     ];
   }
 
