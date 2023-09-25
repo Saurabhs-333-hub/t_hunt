@@ -57,7 +57,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   Container(
                       height: screenHeight * 0.3,
                       width: containerWidth,
-                      color: Colors.red,
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       child: Text("Login Page")),
                   Container(
                       height: screenHeight * 0.7,

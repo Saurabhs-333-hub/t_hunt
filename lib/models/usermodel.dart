@@ -56,19 +56,15 @@ class Usermodel {
   @override
   bool operator ==(covariant Usermodel other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.name == name &&
-      other.email == email &&
-      other.password == password &&
-      other.id == id;
+
+    return other.name == name &&
+        other.email == email &&
+        other.password == password &&
+        other.id == id;
   }
 
   @override
   int get hashCode {
-    return name.hashCode ^
-      email.hashCode ^
-      password.hashCode ^
-      id.hashCode;
+    return name.hashCode ^ email.hashCode ^ password.hashCode ^ id.hashCode;
   }
 }

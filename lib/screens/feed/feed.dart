@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
+import 'package:t_hunt/controllers/post_controller.dart';
+import 'package:t_hunt/screens/feed/feedcard.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -16,11 +19,27 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final currentUser = ref.watch(currentUserDetailsProvider);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      // backgroundColor: Colors.black,
       body: Center(
-        child: currentUser.when(
+        child: ref.watch(postsProvider).when(
             data: (data) {
-              return Text("${data}", style: TextStyle(color: Colors.white));
+              return MasonryGridView.builder(
+                gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                ),
+                physics: BouncingScrollPhysics(
+                  decelerationRate: ScrollDecelerationRate.fast,
+                ),
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      // Text(currentUser.value!.email),
+                      PostCard(post: data[index]),
+                    ],
+                  );
+                },
+                itemCount: data.length,
+              );
             },
             error: (e, st) {
               return Scaffold(

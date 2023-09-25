@@ -60,7 +60,7 @@ class AuthController extends StateNotifier<bool> {
       // Auth.authenticated = true;
       res.fold((l) {
         print(l.message);
-        showSnackBar(context, l.message);
+        errorSnackBar(context, "Error! 😢", l.message);
       }, (r) {
         // Restart.restartApp();
         print(r);
@@ -82,14 +82,15 @@ class AuthController extends StateNotifier<bool> {
       print('objects');
 
       state = false;
-      res.fold((l) => showSnackBar(context, l.message), (r) async {
+      res.fold((l) => errorSnackBar(context, "Error! 😢", l.message),
+          (r) async {
         Usermodel usermodel =
             Usermodel(email: email, id: r.$id, name: "", password: password);
         final res2 = await _userAPI.saveUserData(usermodel);
         res2.fold((l) {
           print(l.message);
-          showSnackBar(context, l.message);
-        }, (r) => showSnackBar(context, "Account Created!"));
+          errorSnackBar(context, "Error! 😢", l.message);
+        }, (r) => successSnackBar(context, "Account Created!", "Congrats! 🥳"));
       });
     } catch (e) {
       print(e);
