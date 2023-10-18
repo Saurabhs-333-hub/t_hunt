@@ -2,18 +2,22 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:grock/grock.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:t_hunt/controllers/post_controller.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
 
   @override
-  State<Profile> createState() => _HomeState();
+  ConsumerState<Profile> createState() => _HomeState();
 }
 
-class _HomeState extends State<Profile> with SingleTickerProviderStateMixin {
+class _HomeState extends ConsumerState<Profile>
+    with SingleTickerProviderStateMixin {
   // late TabController _tabController;
   @override
   void initState() {
@@ -203,6 +207,7 @@ class _HomeState extends State<Profile> with SingleTickerProviderStateMixin {
                         ],
                       ),
                       child: TabBar(
+                          isScrollable: true,
                           dividerColor: Colors.transparent,
                           splashBorderRadius: BorderRadius.circular(30),
                           // controller: _tabController,
@@ -216,12 +221,12 @@ class _HomeState extends State<Profile> with SingleTickerProviderStateMixin {
                             Tab(
                                 icon: Icon(
                               Icons.grid_view,
-                              size: 30,
+                              // size: 30,
                             )),
                             Tab(
                                 icon: Icon(
                               Icons.list,
-                              size: 30,
+                              // size: 30,
                             )),
                           ]),
                     ),
@@ -232,104 +237,180 @@ class _HomeState extends State<Profile> with SingleTickerProviderStateMixin {
                     // controller: _tabController,
                     // physics: NeverScrollableScrollPhysics(),
                     children: [
-                      FutureBuilder(
-                        future: fetchproducts(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          print('data   ${snapshot.data}');
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasData) {
-                            return MasonryGridView.builder(
-                                gridDelegate:
-                                    SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3),
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        double aspectRatio = 0.6;
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: (context) => ImagePage(
-                                            data: snapshot.data,
-                                            initialIndex: index,
-                                            aspectRatio: aspectRatio,
-                                          ),
-                                        ));
-                                      },
-                                      child: Hero(
-                                        tag: "snapshot.data[index][]",
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Card(
-                                            color: Colors.black,
-                                            child: SizedBox(
-                                              height:
-                                                  Random().nextDouble() * 100,
+                      Container(
+                        child: ref.watch(postsProvider).when(
+                              data: (data) {
+                                if (data.isNotEmpty) {
+                                  return MasonryGridView.builder(
+                                      gridDelegate:
+                                          SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3),
+                                      itemCount: data.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: InkWell(
+                                            onTap: () {
+                                              double aspectRatio = 0.6;
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) => ImagePage(
+                                                  data: data,
+                                                  initialIndex: index,
+                                                  aspectRatio: aspectRatio,
+                                                ),
+                                              ));
+                                            },
+                                            child: Hero(
+                                              tag: data[index].postid,
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Stack(
+                                                    children: [
+                                                      if (data[index]
+                                                              .imageLinks
+                                                              .isNotEmpty &&
+                                                          data[index]
+                                                                  .imageLinks
+                                                                  .length >
+                                                              1) ...{
+                                                        Image.network(
+                                                          data[index]
+                                                              .imageLinks[0],
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      } else if (data[index]
+                                                              .imageLinks
+                                                              .isNotEmpty &&
+                                                          data[index]
+                                                                  .imageLinks
+                                                                  .length <
+                                                              2) ...{
+                                                        Image.network(
+                                                          data[index]
+                                                              .imageLinks[0],
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      } else ...{
+                                                        Text(
+                                                            data[index].caption,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white)),
+                                                      }
+                                                    ],
+                                                  )),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
+                                        );
+                                      });
+                                } else {
+                                  return Center(
+                                    child: Text("No Posts"),
                                   );
-                                });
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        },
+                                }
+                              },
+                              error: (error, stackTrace) {
+                                return Center(
+                                  child: Text(error.toString()),
+                                );
+                              },
+                              loading: () {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              skipLoadingOnRefresh: true,
+                              skipLoadingOnReload: true,
+                            ),
                       ),
-                      FutureBuilder(
-                        future: fetchproducts(),
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasData) {
-                            return ListView.builder(
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        double aspectRatio = 0.6;
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: (context) => ImagePage(
-                                            data: snapshot.data,
-                                            initialIndex: index,
-                                            aspectRatio: aspectRatio,
-                                          ),
-                                        ));
-                                      },
-                                      child: Hero(
-                                        tag: "snapshot.data[index][]",
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Card(
-                                            color: Colors.black,
-                                            child: SizedBox(
-                                              height:
-                                                  Random().nextDouble() * 100 +
-                                                      100,
+                      Container(
+                        child: ref.watch(postsProvider).when(
+                              data: (data) {
+                                if (data.isNotEmpty) {
+                                  return ListView.builder(
+                                      itemCount: data.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: InkWell(
+                                            onTap: () {
+                                              double aspectRatio = 0.6;
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: (context) => ImagePage(
+                                                  data: data,
+                                                  initialIndex: index,
+                                                  aspectRatio: aspectRatio,
+                                                ),
+                                              ));
+                                            },
+                                            child: Hero(
+                                              tag: data[index].postid,
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Stack(
+                                                    children: [
+                                                      if (data[index]
+                                                              .imageLinks
+                                                              .isNotEmpty &&
+                                                          data[index]
+                                                                  .imageLinks
+                                                                  .length >
+                                                              1) ...{
+                                                        Image.network(
+                                                          data[index]
+                                                              .imageLinks[0],
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      } else if (data[index]
+                                                              .imageLinks
+                                                              .isNotEmpty &&
+                                                          data[index]
+                                                                  .imageLinks
+                                                                  .length <
+                                                              2) ...{
+                                                        Image.network(
+                                                          data[index]
+                                                              .imageLinks[0],
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      } else ...{
+                                                        Text(
+                                                            data[index].caption,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white)),
+                                                      }
+                                                    ],
+                                                  )),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
+                                        );
+                                      });
+                                } else {
+                                  return Center(
+                                    child: Text("No Posts"),
                                   );
-                                });
-                          } else {
-                            return Center(child: CircularProgressIndicator());
-                          }
-                        },
+                                }
+                              },
+                              error: (error, stackTrace) {
+                                return Center(
+                                  child: Text(error.toString()),
+                                );
+                              },
+                              loading: () {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              skipLoadingOnRefresh: true,
+                              skipLoadingOnReload: true,
+                            ),
                       ),
                     ],
                   ),
@@ -344,7 +425,7 @@ class _HomeState extends State<Profile> with SingleTickerProviderStateMixin {
 }
 
 class ImagePage extends StatelessWidget {
-  final List<Map<String, dynamic>> data;
+  final data;
   final int initialIndex;
   final double aspectRatio; // Aspect ratio of the clicked image
 
@@ -366,44 +447,49 @@ class ImagePage extends StatelessWidget {
     ScrollController _scrollController =
         ScrollController(initialScrollOffset: totalHeight);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(data[initialIndex]["title"]),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+    return SingleChildScrollView(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(data[initialIndex].caption),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
-      ),
-      body: Center(
-        child: ListView.builder(
-          controller: _scrollController,
-          itemCount: data.length,
-          itemBuilder: (context, index) => Hero(
-            tag: data[index]["id"],
-            child: Container(
-              child: AspectRatio(
-                aspectRatio: aspectRatio,
-                child: Column(
-                  children: [
-                    Image.network(
-                      data[index]["thumbnail"],
-                      fit: BoxFit.contain,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        data[index]["title"],
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
+        body: Expanded(
+          child: ListView.builder(
+            controller: _scrollController,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: data.length,
+            itemBuilder: (context, index) => Hero(
+              tag: data[index].postid,
+              child: Container(
+                child: AspectRatio(
+                  aspectRatio: aspectRatio,
+                  child: Column(
+                    children: [
+                      if (data[index].imageLinks.isNotEmpty) ...{
+                        Image.network(
+                          data[index].imageLinks[0],
+                          fit: BoxFit.contain,
+                        ),
                       },
-                      child: Text("Add to Cart"),
-                    ),
-                    Expanded(child: Text(data[index]["description"]))
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          data[index].caption,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Add to Cart"),
+                      ),
+                      Expanded(child: Text(data[index].postid))
+                    ],
+                  ),
                 ),
               ),
             ),
