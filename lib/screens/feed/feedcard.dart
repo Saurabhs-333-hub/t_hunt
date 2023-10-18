@@ -14,7 +14,7 @@ class PostCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(userDetailsProvider(post.uid)).when(
       data: (data) {
-        return Card(
+        return Container(
           child: Column(
             children: [
               Row(
@@ -29,9 +29,13 @@ class PostCard extends ConsumerWidget {
                 ],
               ),
               post.imageLinks.isNotEmpty
-                  ? CarouselSliders(imageLinks: post.imageLinks)
+                  ? CarouselSliders(post: post)
                   : SizedBox.shrink(),
-              HashTagText(text: post.caption),
+              HashTagText(text: post.caption, textColor: Colors.white),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Divider(),
+              )
             ],
           ),
         );

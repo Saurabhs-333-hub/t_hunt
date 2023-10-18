@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grock/grock.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:t_hunt/apis/post_api.dart';
 import 'package:t_hunt/apis/storage_api.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
@@ -68,19 +69,116 @@ class PostController extends StateNotifier<bool> {
     String link = _getLinkFromCaption(caption);
     final uid = _ref.read(currentUserDetailsProvider).value!;
     final imageLinks = await _storageAPI.uploadFiles(images);
+    addImageColor() async {
+      if (imageLinks.isNotEmpty) {
+        List<String> imageColors = [];
+        for (String image in imageLinks) {
+          // print('imageColors: $imageColors');
+
+          if (image.isNotEmpty) {
+            final PaletteGenerator paletteGenerator =
+                await PaletteGenerator.fromImageProvider(NetworkImage(image),
+                    // size: Size(100, 100),
+                    // region: Rect.fromLTRB(0, 0, 0, 0),
+                    timeout: Duration(seconds: 0));
+
+            paletteGenerator.dominantColor == null
+                ? imageColors.add(PaletteColor(Colors.black, 1).toString())
+                : imageColors
+                    .add(paletteGenerator.dominantColor!.color.toString());
+            // print('dycolors: $dycolors');
+            // setState(() {});
+          }
+        }
+        // print(imageColors);
+        return imageColors;
+        // await generateBlurHashForCurrentImage();
+      }
+    }
+
+    addTitleColor() async {
+      if (imageLinks.isNotEmpty) {
+        List<String> titleColors = [];
+        for (String image in imageLinks) {
+          // print('titleColors: $titleColors');
+
+          if (image.isNotEmpty) {
+            final PaletteGenerator paletteGenerator =
+                await PaletteGenerator.fromImageProvider(NetworkImage(image),
+
+                    // size: Size(100, 100),
+                    timeout: Duration(seconds: 0));
+
+            paletteGenerator.dominantColor == null
+                ? titleColors.add(
+                    PaletteColor(Color.fromARGB(255, 255, 255, 255), 1)
+                        .toString())
+                : titleColors.add(
+                    paletteGenerator.dominantColor!.titleTextColor.toString());
+            // print('dycolors: $dycolors');
+            // setState(() {});
+          }
+        }
+        // print(titleColors);
+        return titleColors;
+        // await generateBlurHashForCurrentImage();
+      }
+    }
+
+    addTextColor() async {
+      if (imageLinks.isNotEmpty) {
+        List<String> textColors = [];
+        for (String image in imageLinks) {
+          // print('textColors: $textColors');
+
+          if (image.isNotEmpty) {
+            final PaletteGenerator paletteGenerator =
+                await PaletteGenerator.fromImageProvider(NetworkImage(image),
+
+                    // size: Size(100, 100),
+                    timeout: Duration(seconds: 0));
+
+            paletteGenerator.dominantColor == null
+                ? textColors.add(
+                    PaletteColor(const Color.fromARGB(255, 255, 255, 255), 1)
+                        .toString())
+                : textColors.add(
+                    paletteGenerator.dominantColor!.bodyTextColor.toString());
+            // print('dycolors: $dycolors');
+            // setState(() {});
+          }
+        }
+        // print(textColors);
+        return textColors;
+        // await generateBlurHashForCurrentImage();
+      }
+    }
+
+    final imageColors = await addImageColor();
+    final titleColors = await addTitleColor();
+    final textColors = await addTextColor();
+
+    print('imageColors:     $imageColors');
+    print('titleColors:     $titleColors');
+    print('textColors:     $textColors');
     Postmodel post = Postmodel(
-        caption: caption,
-        hashtags: hashtags,
-        link: link,
-        imageLinks: imageLinks,
-        uid: uid.id,
-        postType: PostType.image,
-        postedAt: DateTime.now(),
-        likes: [],
-        commentIds: [],
-        postid: '',
-        isActive: true,
-        reShareCount: 0);
+      caption: caption,
+      hashtags: hashtags,
+      link: link,
+      imageLinks: imageLinks,
+      uid: uid.id,
+      postType: PostType.image,
+      postedAt: DateTime.now(),
+      likes: [],
+      commentIds: [],
+      postid: '',
+      isActive: true,
+      reShareCount: 0,
+      imageColor: imageColors ?? [],
+      titleColor: titleColors ?? [],
+      textColor: textColors ?? [],
+      blurhash: [],
+    );
     final res = await _postAPI.sharePost(post);
     state = false;
     res.fold((l) {
@@ -100,18 +198,23 @@ class PostController extends StateNotifier<bool> {
     String link = _getLinkFromCaption(caption);
     final uid = _ref.read(currentUserDetailsProvider).value!;
     Postmodel post = Postmodel(
-        caption: caption,
-        hashtags: hashtags,
-        link: link,
-        imageLinks: [],
-        uid: uid.id,
-        postType: PostType.caption,
-        postedAt: DateTime.now(),
-        likes: [],
-        commentIds: [],
-        postid: '',
-        isActive: true,
-        reShareCount: 0);
+      caption: caption,
+      hashtags: hashtags,
+      link: link,
+      imageLinks: [],
+      uid: uid.id,
+      postType: PostType.caption,
+      postedAt: DateTime.now(),
+      likes: [],
+      commentIds: [],
+      postid: '',
+      isActive: true,
+      reShareCount: 0,
+      imageColor: [],
+      titleColor: [],
+      textColor: [],
+      blurhash: [],
+    );
     final res = await _postAPI.sharePost(post);
     state = false;
     res.fold((l) {

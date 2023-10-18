@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:palette_generator/palette_generator.dart';
 
 import 'package:t_hunt/core/post_type.dart';
 
@@ -18,6 +19,11 @@ class Postmodel {
   final String postid;
   final bool isActive;
   final int reShareCount;
+  final List<String> imageColor;
+  final List<String> titleColor;
+  final List<String> textColor;
+
+  final List<String> blurhash;
   Postmodel({
     required this.caption,
     required this.hashtags,
@@ -31,6 +37,10 @@ class Postmodel {
     required this.postid,
     required this.isActive,
     required this.reShareCount,
+    required this.imageColor,
+    required this.titleColor,
+    required this.textColor,
+    required this.blurhash,
   });
 
   Postmodel copyWith({
@@ -46,6 +56,10 @@ class Postmodel {
     String? postid,
     bool? isActive,
     int? reShareCount,
+    List<String>? imageColor,
+    List<String>? titleColor,
+    List<String>? textColor,
+    List<String>? blurhash,
   }) {
     return Postmodel(
       caption: caption ?? this.caption,
@@ -60,6 +74,10 @@ class Postmodel {
       postid: postid ?? this.postid,
       isActive: isActive ?? this.isActive,
       reShareCount: reShareCount ?? this.reShareCount,
+      imageColor: imageColor ?? this.imageColor,
+      titleColor: titleColor ?? this.titleColor,
+      textColor: textColor ?? this.textColor,
+      blurhash: blurhash ?? this.blurhash,
     );
   }
 
@@ -76,6 +94,10 @@ class Postmodel {
       'commentIds': commentIds,
       'isActive': isActive,
       'reShareCount': reShareCount,
+      'imageColor': imageColor,
+      'titleColor': titleColor,
+      'textColor': textColor,
+      'blurhash': blurhash,
     };
   }
 
@@ -93,12 +115,16 @@ class Postmodel {
       postid: map['\$id'] as String,
       isActive: map['isActive'] as bool,
       reShareCount: map['reShareCount'] as int,
+      imageColor: List<String>.from((map['imageColor'] as List<dynamic>)),
+      titleColor: List<String>.from((map['titleColor'] as List<dynamic>)),
+      textColor: List<String>.from((map['textColor'] as List<dynamic>)),
+      blurhash: List<String>.from((map['blurhash'] as List<dynamic>)),
     );
   }
 
   @override
   String toString() {
-    return 'Postmodel(caption: $caption, hashtags: $hashtags, link: $link, imageLinks: $imageLinks, uid: $uid, postType: $postType, postedAt: $postedAt, likes: $likes, commentIds: $commentIds, postid: $postid, isActive: $isActive, reShareCount: $reShareCount)';
+    return 'Postmodel(caption: $caption, hashtags: $hashtags, link: $link, imageLinks: $imageLinks, uid: $uid, postType: $postType, postedAt: $postedAt, likes: $likes, commentIds: $commentIds, postid: $postid, isActive: $isActive, reShareCount: $reShareCount, imageColor: $imageColor, titleColor: $titleColor, textColor: $textColor, blurhash: $blurhash)';
   }
 
   @override
@@ -116,7 +142,11 @@ class Postmodel {
         listEquals(other.commentIds, commentIds) &&
         other.postid == postid &&
         other.isActive == isActive &&
-        other.reShareCount == reShareCount;
+        other.reShareCount == reShareCount &&
+        listEquals(other.imageColor, imageColor) &&
+        listEquals(other.titleColor, titleColor) &&
+        listEquals(other.textColor, textColor) &&
+        listEquals(other.blurhash, blurhash);
   }
 
   @override
@@ -132,6 +162,10 @@ class Postmodel {
         commentIds.hashCode ^
         postid.hashCode ^
         isActive.hashCode ^
-        reShareCount.hashCode;
+        reShareCount.hashCode ^
+        imageColor.hashCode ^
+        titleColor.hashCode ^
+        textColor.hashCode ^
+        blurhash.hashCode;
   }
 }

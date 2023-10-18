@@ -67,21 +67,27 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          TextField(
+                          TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             controller: _usernameController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Username',
                             ),
                           ),
-                          TextField(
+                          TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             controller: _emailController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Email',
                             ),
                           ),
-                          TextField(
+                          TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             controller: _passwordController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),

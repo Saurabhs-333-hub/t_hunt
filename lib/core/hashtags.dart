@@ -7,8 +7,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HashTagText extends StatelessWidget {
   final String text;
+  final Color textColor;
 
-  HashTagText({required this.text});
+  HashTagText({required this.text, required this.textColor});
   Future<void> _launchEmail(String url, BuildContext context) async {
     print(url);
     if (await canLaunchUrl(Uri(scheme: 'mailto', path: url))) {
@@ -62,14 +63,17 @@ class HashTagText extends StatelessWidget {
     List<TextSpan> textSpans = [];
     text.split(' ').forEach((element) {
       if (element.startsWith('#')) {
-        textSpans.add(
-            TextSpan(text: ' $element ', style: TextStyle(color: Colors.blue)));
-      } else if (element.startsWith('www.')) {
+        textSpans.add(TextSpan(
+            text: ' $element ',
+            style: TextStyle(color: textColor, fontSize: 16)));
+      } else if (element.startsWith('www,.')) {
         // Add "http://" to URLs starting with "www." if not already a valid link
         element = "http://$element";
         textSpans.add(TextSpan(
             text: ' $element ',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(
+              color: textColor,
+            ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 _launchUrl(element, context);
@@ -77,7 +81,9 @@ class HashTagText extends StatelessWidget {
       } else if (_isValidLink(element)) {
         textSpans.add(TextSpan(
             text: ' $element ',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(
+              color: textColor,
+            ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 _launchUrl(element, context);
@@ -88,7 +94,9 @@ class HashTagText extends StatelessWidget {
         element = "http://$element";
         textSpans.add(TextSpan(
             text: ' $element ',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(
+              color: textColor,
+            ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 _launchUrl(element, context);
@@ -96,23 +104,29 @@ class HashTagText extends StatelessWidget {
       } else if (element.startsWith('@')) {
         textSpans.add(TextSpan(
           text: ' $element ',
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(
+            color: textColor,
+          ),
         ));
       } else if (_isValidEmail(element)) {
         textSpans.add(TextSpan(
             text: ' $element ',
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(
+              color: textColor,
+            ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 _launchEmail(element, context);
               }));
       } else {
-        textSpans.add(TextSpan(text: ' $element '));
+        textSpans.add(TextSpan(
+            text: ' $element ',
+            style: TextStyle(color: textColor, fontSize: 16)));
       }
     });
     return GestureDetector(
       onLongPress: () {
-        _copyToClipboard('', context);
+        _copyToClipboard(text, context);
       },
       child: RichText(
         text: TextSpan(children: textSpans),

@@ -10,6 +10,7 @@ import 'package:t_hunt/screens/authentication/login.dart';
 import 'package:t_hunt/screens/clips/create_clips.dart';
 import 'package:t_hunt/screens/clips/median_screen.dart';
 import 'package:t_hunt/screens/feed/feed.dart';
+import 'package:t_hunt/screens/profile/profile.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -40,6 +41,7 @@ class _HomeState extends ConsumerState<Home> {
         ),
       )),
       CreateClips(),
+      DefaultTabController(length: 2, child: Profile())
     ];
   }
 
@@ -60,6 +62,12 @@ class _HomeState extends ConsumerState<Home> {
       PersistentBottomNavBarItem(
         icon: Icon(CupertinoIcons.settings),
         title: ("Settings"),
+        activeColorPrimary: CupertinoColors.activeBlue,
+        inactiveColorPrimary: CupertinoColors.systemGrey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(CupertinoIcons.profile_circled),
+        title: ("Profiile"),
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
