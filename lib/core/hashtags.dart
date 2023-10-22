@@ -2,14 +2,22 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:t_hunt/controllers/post_controller.dart';
 import 'package:t_hunt/core/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HashTagText extends StatelessWidget {
+class HashTagText extends ConsumerStatefulWidget {
   final String text;
   final Color textColor;
 
   HashTagText({required this.text, required this.textColor});
+
+  @override
+  ConsumerState<HashTagText> createState() => _HashTagTextState();
+}
+
+class _HashTagTextState extends ConsumerState<HashTagText> {
   Future<void> _launchEmail(String url, BuildContext context) async {
     print(url);
     if (await canLaunchUrl(Uri(scheme: 'mailto', path: url))) {
@@ -54,25 +62,59 @@ class HashTagText extends StatelessWidget {
 
   void _copyToClipboard(String text, BuildContext context) {
     Clipboard.setData(ClipboardData(text: text));
-    defaultSnackBar(context, 'ClipBoard 👋', 'Now!, its inside me! (Copied!)');
+    defaultSnackBar(context, 'ClipBoard 👋', 'Copied! (Now!, its inside me!)');
     SystemChannels.platform.invokeMethod<void>('HapticFeedback.vibrate');
   }
 
   @override
   Widget build(BuildContext context) {
     List<TextSpan> textSpans = [];
-    text.split(' ').forEach((element) {
+    widget.text.split(' ').forEach((element) {
       if (element.startsWith('#')) {
         textSpans.add(TextSpan(
             text: ' $element ',
-            style: TextStyle(color: textColor, fontSize: 16)));
+            style: TextStyle(color: widget.textColor, fontSize: 16),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                Navigator.of(context).push(ModalBottomSheetRoute(
+                    builder: (context) {
+                      return ref.watch(hashtagpostsProvider(element)).when(
+                        data: (data) {
+                          return SafeArea(
+                            child: Scaffold(
+                                appBar: AppBar(
+                                  title: Text(element),
+                                ),
+                                body: ListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text('data[index].caption'),
+                                    );
+                                  },
+                                )),
+                          );
+                        },
+                        error: (error, stackTrace) {
+                          return Text(error.toString());
+                        },
+                        loading: () {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                      );
+                    },
+                    isScrollControlled: true,
+                    showDragHandle: true));
+              }));
       } else if (element.startsWith('www,.')) {
         // Add "http://" to URLs starting with "www." if not already a valid link
         element = "http://$element";
         textSpans.add(TextSpan(
             text: ' $element ',
             style: TextStyle(
-              color: textColor,
+              color: widget.textColor,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
@@ -82,7 +124,7 @@ class HashTagText extends StatelessWidget {
         textSpans.add(TextSpan(
             text: ' $element ',
             style: TextStyle(
-              color: textColor,
+              color: widget.textColor,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
@@ -95,7 +137,7 @@ class HashTagText extends StatelessWidget {
         textSpans.add(TextSpan(
             text: ' $element ',
             style: TextStyle(
-              color: textColor,
+              color: widget.textColor,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
@@ -105,14 +147,14 @@ class HashTagText extends StatelessWidget {
         textSpans.add(TextSpan(
           text: ' $element ',
           style: TextStyle(
-            color: textColor,
+            color: widget.textColor,
           ),
         ));
       } else if (_isValidEmail(element)) {
         textSpans.add(TextSpan(
             text: ' $element ',
             style: TextStyle(
-              color: textColor,
+              color: widget.textColor,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
@@ -121,12 +163,12 @@ class HashTagText extends StatelessWidget {
       } else {
         textSpans.add(TextSpan(
             text: ' $element ',
-            style: TextStyle(color: textColor, fontSize: 16)));
+            style: TextStyle(color: Colors.white, fontSize: 16)));
       }
     });
     return GestureDetector(
       onLongPress: () {
-        _copyToClipboard(text, context);
+        _copyToClipboard(widget.text, context);
       },
       child: RichText(
         text: TextSpan(children: textSpans),

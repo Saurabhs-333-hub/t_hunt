@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -40,7 +41,7 @@ class _HomeState extends ConsumerState<Home> {
           ],
         ),
       )),
-      CreateClips(),
+      ZoomDrawer(menuScreen: Scaffold(), mainScreen: CreateClips()),
       DefaultTabController(length: 2, child: Profile())
     ];
   }

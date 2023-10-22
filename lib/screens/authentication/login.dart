@@ -22,9 +22,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void onSignup() {
     ref.read(authControllerProvider.notifier).signUp(
-        email: _emailController.text,
+        email: _emailController.text.trim(),
         password: _passwordController.text,
-        context: context);
+        context: context,
+        name: _usernameController.text.trim());
     print('object');
   }
 

@@ -13,11 +13,28 @@ class AppwriteConstants {
   static const String postCollection = '650a76b012ee29638dfe';
   static const String repliesCollection = '648c0efba7239b5a65f7';
 
-  static const String fileBucket = '650a76d6359b15f9b5de';
+  static const String fileBucket = '6533a801f247c645744b';
   static const String videoBucketBackup = '64d95890a070eb0fb3b2';
 
   static String fileUrl(String fileId) =>
-      '$endPoint/storage/buckets/$fileBucket/files/$fileId/view?project=$projectId&mode=admin';
+      '$endPoint/storage/buckets/$fileBucket/files/$fileId/view?project=$projectId';
   static String videoBackupUrl(String videoBackupId) =>
-      '$endPoint/storage/buckets/$videoBucketBackup/files/$videoBackupId/view?project=$projectId&mode=admin';
+      '$endPoint/storage/buckets/$videoBucketBackup/files/$videoBackupId/view?project=$projectId';
+      
+  
+  // Split the URL by "/"
+  // List<String> parts = fileUrl.split("/");
+  
+  // // Find the index of "files" in the parts list
+  // int filesIndex = parts.indexOf("files");
+  
+  // // Check if "files" was found and there is a part after it
+  // if (filesIndex != -1 && filesIndex + 1 < parts.length) {
+  //   // The fileid should be the part after "files"
+  //   String fileId = parts[filesIndex + 1];
+    
+  //   // Remove any query parameters, if any
+  //   fileId = fileId.split("?").first;
+    
+  //   print("File ID: $fileId");
 }

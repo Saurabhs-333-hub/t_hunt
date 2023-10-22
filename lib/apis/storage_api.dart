@@ -24,4 +24,14 @@ class StorageAPI {
     }
     return imageLinks;
   }
+
+  Future<void> deleteFiles(String fileID) async {
+    // List<String> imageLinks = [];
+
+      final uplaodedImage = await _storage.deleteFile(
+          bucketId: AppwriteConstants.fileBucket, fileId: fileID);
+      // imageLinks.add(AppwriteConstants.fileUrl(uplaodedImage.$id));
+      print(uplaodedImage);
+    
+  }
 }

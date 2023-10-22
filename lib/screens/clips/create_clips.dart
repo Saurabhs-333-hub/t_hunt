@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:grock/grock.dart';
 import 'package:image_picker_plus/image_picker_plus.dart';
@@ -61,49 +62,92 @@ class _CreateClipsState extends ConsumerState<CreateClips> {
         }
         return Scaffold(
           // backgroundColor: Colors.black,
-          body: Center(
-              child: SingleChildScrollView(
+          appBar: AppBar(
+            leading: IconButton(
+                onPressed: () {
+                  ZoomDrawer.of(context)!.toggle();
+                },
+                icon: Icon(Icons.menu_rounded)),
+          ),
+          drawer: ZoomDrawer(
+              menuScreenTapClose: true,
+              shrinkMainScreen: true,
+              menuScreen: CreateClips(),
+              mainScreen: Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.ads_click_rounded)),
+                ),
+              )),
+          body: SingleChildScrollView(
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            "https://images.unsplash.com/photo-1695241263069-f8eb9e43f3b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NjAzNjl8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcyNDUxNzl8&ixlib=rb-4.0.3&q=80&w=1080"),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("I am posting...",
+                            style: TextStyle(
+                                color: Color.fromARGB(158, 255, 255, 255),
+                                fontSize: 20)),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(107, 3, 3, 3),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: TextField(
-                      controller: captionController,
-                      autocorrect: true,
-                      enableSuggestions: true,
-                      enableIMEPersonalizedLearning: true,
-                      maxLines: 6,
-                      restorationId: captionController.text,
-                    )),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          // Future<SelectedImagesDetails?> files =
-                          //     ImagePickerPlus(
-                          //   context,
-                          // ).pickBoth(
-                          //         source: ImageSource.both,
-                          //         multiSelection: true,
-                          //         galleryDisplaySettings:
-                          //             GalleryDisplaySettings(
-                          //           cropImage: true,
-                          //           showImagePreview: true,
-                          //           gridDelegate:
-                          //               SliverGridDelegateWithFixedCrossAxisCount(
-                          //             crossAxisCount: 3,
-                          //             crossAxisSpacing: 5,
-                          //             mainAxisSpacing: 5,
-                          //           ),
-                          //         ));
-                          onPickFiles();
-                        },
-                        splashColor: Colors.white,
-                        child: Icon(Icons.add_a_photo, color: Colors.white),
+                          controller: captionController,
+                          decoration: InputDecoration(border: InputBorder.none),
+                          autocorrect: true,
+                          enableSuggestions: true,
+                          enableIMEPersonalizedLearning: true,
+                          maxLines: 6,
+                          restorationId: captionController.text,
+                        ),
                       ),
                     ),
-                  ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            onPickFiles();
+                          },
+                          child: Icon(Icons.photo_library, color: Colors.white),
+                        ),
+                      ),
+                      TextButton.icon(
+                          onPressed: () {
+                            sharePost();
+                          },
+                          icon: Icon(Icons.keyboard_double_arrow_up_rounded),
+                          label: Text("Post")),
+                    ],
+                  ),
                 ),
                 if (file.isNotEmpty) ...{
                   Center(
@@ -159,11 +203,7 @@ class _CreateClipsState extends ConsumerState<CreateClips> {
                     ),
                   ))
                 },
-                TextButton(
-                    onPressed: () {
-                      sharePost();
-                    },
-                    child: Text("Post")),
+
                 // IconButton.outlined(
                 //     onPressed: () {
                 //       Navigator.of(context).push(
@@ -172,7 +212,7 @@ class _CreateClipsState extends ConsumerState<CreateClips> {
                 //     icon: Icon(Icons.ads_click_rounded))
               ],
             ),
-          )),
+          ),
         );
       },
       error: (e, st) {

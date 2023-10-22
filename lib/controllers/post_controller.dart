@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:appwrite/appwrite.dart';
@@ -23,6 +24,9 @@ final postControllerProvider =
 final postsProvider = FutureProvider((ref) async {
   return ref.watch(postControllerProvider.notifier).getPosts();
 });
+final hashtagpostsProvider = FutureProviderFamily((ref, String hashtag) async {
+  return ref.watch(postControllerProvider.notifier).getHashtagPosts(hashtag);
+});
 
 class PostController extends StateNotifier<bool> {
   final Ref _ref;
@@ -39,6 +43,45 @@ class PostController extends StateNotifier<bool> {
   Future<List<Postmodel>> getPosts() async {
     final posts = await _postAPI.getDocuments();
     return posts.map((e) => Postmodel.fromMap(e.data)).toList();
+  }
+
+  Future<List<Postmodel>> getHashtagPosts(String hashtag) async {
+    final posts = await _postAPI.getHashtagDocuments(hashtag);
+    return posts.map((e) => Postmodel.fromMap(e.data)).toList();
+  }
+
+  void deletePost(
+      {required Postmodel post, required BuildContext context}) async {
+    try {
+      state = true;
+      await _postAPI.deletePost(post, context);
+      String id;
+      for (var link in post.imageLinks) {
+        List<String> parts = link.split("/");
+
+        // Find the index of "files" in the parts list
+        int filesIndex = parts.indexOf("files");
+
+        // Check if "files" was found and there is a part after it
+        if (filesIndex != -1 && filesIndex + 1 < parts.length) {
+          // The fileid should be the part after "files"
+          String fileId = parts[filesIndex + 1];
+
+          // Remove any query parameters, if any
+          fileId = fileId.split("?").first;
+          id = fileId;
+          print("File ID: $id");
+          await _storageAPI.deleteFiles(fileId);
+        }
+        // Split the URL by "/"
+      }
+
+      state = false;
+      successSnackBar(context, "Deleted! 🥳", "Post deleted successfully");
+    } catch (e) {
+      state = false;
+      errorSnackBar(context, "Error! 😢", e.toString());
+    }
   }
 
   void sharePost({

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:grock/grock.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
+import 'package:t_hunt/controllers/post_controller.dart';
 import 'package:t_hunt/core/carousel_sliders.dart';
 import 'package:t_hunt/core/hashtags.dart';
 import 'package:t_hunt/models/postmodel.dart';
@@ -12,6 +14,13 @@ class PostCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(postControllerProvider);
+    deletePost() {
+      ref
+          .read(postControllerProvider.notifier)
+          .deletePost(post: post, context: context);
+    }
+
     return ref.watch(userDetailsProvider(post.uid)).when(
       data: (data) {
         return Container(
@@ -25,13 +34,56 @@ class PostCard extends ConsumerWidget {
                         )
                       : SizedBox.shrink(),
                   Expanded(child: Text(data.email)),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))
+                  IconButton(
+                      onPressed: () {
+                        Grock.dialog(
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Delete Post"),
+                              content: Text("Are you sure you want to delete?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Cancel")),
+                                TextButton(
+                                    onPressed: () {
+                                      deletePost();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Delete"))
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.more_vert))
                 ],
               ),
-              post.imageLinks.isNotEmpty
-                  ? CarouselSliders(post: post)
-                  : SizedBox.shrink(),
-              HashTagText(text: post.caption, textColor: Colors.white),
+              if (isLoading) ...{
+                Center(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Deleting Post..."),
+                    )
+                  ],
+                )),
+              } else ...{
+                post.imageLinks.isNotEmpty
+                    ? CarouselSliders(post: post)
+                    : SizedBox.shrink(),
+                HashTagText(
+                    text: post.caption,
+                    textColor: Color.fromARGB(255, 0, 13, 255)),
+              },
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Divider(),

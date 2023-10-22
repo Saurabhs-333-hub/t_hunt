@@ -13,7 +13,7 @@ void successSnackBar(BuildContext context, String title, String description) {
       curve: Curves.easeInOutCubicEmphasized,
       blur: 20.0,
       color: Color.fromARGB(131, 124, 124, 124),
-      opacity: 0.3,
+      // opacity: 0.3,
       itemSpaceHeight: 10,
       leading: Icon(
         Icons.check_circle_rounded,
@@ -30,8 +30,8 @@ void errorSnackBar(BuildContext context, String title, String description) {
       description: description,
       curve: Curves.easeInOutCubicEmphasized,
       blur: 20.0,
-      color: Color.fromARGB(186, 160, 160, 160),
-      opacity: 0.3,
+      color: Color.fromARGB(108, 160, 160, 160),
+      // opacity: 0.3,
       itemSpaceHeight: 10,
       leading: Icon(
         Icons.error_rounded,
@@ -48,9 +48,10 @@ void warningSnackBar(BuildContext context, String title, String description) {
       description: description,
       curve: Curves.easeInOutCubicEmphasized,
       blur: 20.0,
-      color: Color.fromARGB(131, 124, 124, 124),
-      opacity: 0.3,
-      itemSpaceHeight: 10,
+      color: Color.fromARGB(126, 124, 124, 124),
+      // opacity: 0.3,
+      itemSpaceHeight: 0,
+      borderRadius: BorderRadius.circular(20),
       leading: Icon(
         Icons.error_rounded,
         color: Colors.yellow,
@@ -67,7 +68,7 @@ void defaultSnackBar(BuildContext context, String title, String description) {
     curve: Curves.easeInOutCubicEmphasized,
     blur: 20.0,
     color: Color.fromARGB(131, 124, 124, 124),
-    opacity: 0.3,
+    // opacity: 0.3,
     itemSpaceHeight: 10,
     leading: Icon(
       Icons.error_rounded,
@@ -80,7 +81,8 @@ Future<List<File>> pickFiles() async {
   if (Platform.isAndroid || Platform.isIOS) {
     List<File> compressedImages = [];
     final ImagePicker _picker = ImagePicker();
-    final imageFiles = await _picker.pickMultiImage(requestFullMetadata: true);
+    final imageFiles =
+        await _picker.pickMultipleMedia(requestFullMetadata: true);
     if (imageFiles.isNotEmpty) {
       for (final image in imageFiles) {
         final File pickedImage = File(image.path);
@@ -94,7 +96,8 @@ Future<List<File>> pickFiles() async {
   } else {
     List<File> images = [];
     final ImagePicker _picker = ImagePicker();
-    final imageFiles = await _picker.pickMultiImage(requestFullMetadata: true);
+    final imageFiles =
+        await _picker.pickMultipleMedia(requestFullMetadata: true);
     if (imageFiles.isNotEmpty) {
       for (final image in imageFiles) {
         images.add(File(image.path));

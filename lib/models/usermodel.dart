@@ -6,25 +6,26 @@ class Usermodel {
   final String email;
   final String password;
   final String id;
-  Usermodel({
-    required this.name,
-    required this.email,
-    required this.password,
-    required this.id,
-  });
+  final String profilePic;
+  Usermodel(
+      {required this.name,
+      required this.email,
+      required this.password,
+      required this.id,
+      required this.profilePic});
 
-  Usermodel copyWith({
-    String? name,
-    String? email,
-    String? password,
-    String? id,
-  }) {
+  Usermodel copyWith(
+      {String? name,
+      String? email,
+      String? password,
+      String? id,
+      String? profilePic}) {
     return Usermodel(
-      name: name ?? this.name,
-      email: email ?? this.email,
-      password: password ?? this.password,
-      id: id ?? this.id,
-    );
+        name: name ?? this.name,
+        email: email ?? this.email,
+        password: password ?? this.password,
+        id: id ?? this.id,
+        profilePic: profilePic ?? this.profilePic);
   }
 
   Map<String, dynamic> toMap() {
@@ -32,16 +33,17 @@ class Usermodel {
       'name': name,
       'email': email,
       'password': password,
+      'profilePic': profilePic
     };
   }
 
   factory Usermodel.fromMap(Map<String, dynamic> map) {
     return Usermodel(
-      name: map['name'] as String,
-      email: map['email'] as String,
-      password: map['password'] as String,
-      id: map['\$id'] as String,
-    );
+        name: map['name'] as String,
+        email: map['email'] as String,
+        password: map['password'] as String,
+        id: map['\$id'] as String,
+        profilePic: map['profilePic'] as String);
   }
 
   // String toJson() => json.encode(toMap());
@@ -50,7 +52,7 @@ class Usermodel {
 
   @override
   String toString() {
-    return 'Usermodel(name: $name, email: $email, password: $password, id: $id)';
+    return 'Usermodel(name: $name, email: $email, password: $password, id: $id, profilePic: $profilePic)';
   }
 
   @override
@@ -60,11 +62,16 @@ class Usermodel {
     return other.name == name &&
         other.email == email &&
         other.password == password &&
-        other.id == id;
+        other.id == id &&
+        other.profilePic == profilePic;
   }
 
   @override
   int get hashCode {
-    return name.hashCode ^ email.hashCode ^ password.hashCode ^ id.hashCode;
+    return name.hashCode ^
+        email.hashCode ^
+        password.hashCode ^
+        id.hashCode ^
+        profilePic.hashCode;
   }
 }

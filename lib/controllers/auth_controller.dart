@@ -75,6 +75,7 @@ class AuthController extends StateNotifier<bool> {
     required String email,
     required String password,
     required BuildContext context,
+    required String name
   }) async {
     state = true;
     try {
@@ -85,7 +86,7 @@ class AuthController extends StateNotifier<bool> {
       res.fold((l) => errorSnackBar(context, "Error! 😢", l.message),
           (r) async {
         Usermodel usermodel =
-            Usermodel(email: email, id: r.$id, name: "", password: password);
+            Usermodel(email: email, id: r.$id, name: name, password: password, profilePic: "");
         final res2 = await _userAPI.saveUserData(usermodel);
         res2.fold((l) {
           print(l.message);
