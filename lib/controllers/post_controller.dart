@@ -28,6 +28,14 @@ final hashtagpostsProvider = FutureProviderFamily((ref, String hashtag) async {
   return ref.watch(postControllerProvider.notifier).getHashtagPosts(hashtag);
 });
 
+final weblinkpostsProvider = FutureProviderFamily((ref, String weblink) async {
+  return ref.watch(postControllerProvider.notifier).getWeblinkPosts(weblink);
+});
+
+final emailpostsProvider = FutureProviderFamily((ref, String email) async {
+  return ref.watch(postControllerProvider.notifier).getEmailPosts(email);
+});
+
 class PostController extends StateNotifier<bool> {
   final Ref _ref;
   final PostAPI _postAPI;
@@ -47,6 +55,16 @@ class PostController extends StateNotifier<bool> {
 
   Future<List<Postmodel>> getHashtagPosts(String hashtag) async {
     final posts = await _postAPI.getHashtagDocuments(hashtag);
+    return posts.map((e) => Postmodel.fromMap(e.data)).toList();
+  }
+
+  Future<List<Postmodel>> getWeblinkPosts(String weblink) async {
+    final posts = await _postAPI.getWeblinkDocuments(weblink);
+    return posts.map((e) => Postmodel.fromMap(e.data)).toList();
+  }
+
+  Future<List<Postmodel>> getEmailPosts(String email) async {
+    final posts = await _postAPI.getEmailDocuments(email);
     return posts.map((e) => Postmodel.fromMap(e.data)).toList();
   }
 
@@ -109,6 +127,10 @@ class PostController extends StateNotifier<bool> {
   }) async {
     state = true;
     final hashtags = _getHashtagsFromCaption(caption);
+    final weblinks = _getWebLinksFromCaption(caption);
+    print('weblinks: $weblinks');
+
+    final emails = _getEmailsFromCaption(caption);
     String link = _getLinkFromCaption(caption);
     final uid = _ref.read(currentUserDetailsProvider).value!;
     final imageLinks = await _storageAPI.uploadFiles(images);
@@ -207,6 +229,8 @@ class PostController extends StateNotifier<bool> {
     Postmodel post = Postmodel(
       caption: caption,
       hashtags: hashtags,
+      weblinks: weblinks,
+      emails: emails,
       link: link,
       imageLinks: imageLinks,
       uid: uid.id,
@@ -238,11 +262,16 @@ class PostController extends StateNotifier<bool> {
   }) async {
     state = true;
     final hashtags = _getHashtagsFromCaption(caption);
+    final weblinks = _getWebLinksFromCaption(caption);
+    print('weblinks: $weblinks');
+    final emails = _getEmailsFromCaption(caption);
     String link = _getLinkFromCaption(caption);
     final uid = _ref.read(currentUserDetailsProvider).value!;
     Postmodel post = Postmodel(
       caption: caption,
       hashtags: hashtags,
+      weblinks: weblinks,
+      emails: emails,
       link: link,
       imageLinks: [],
       uid: uid.id,
@@ -307,4 +336,49 @@ class PostController extends StateNotifier<bool> {
 
     return hashtags;
   }
+}
+
+List<String> _getWebLinksFromCaption(String caption) {
+  final RegExp regex = RegExp(
+    r'(https?://\S+|www\.\S+)',
+    caseSensitive: false,
+  );
+
+  final Iterable<Match> matches = regex.allMatches(caption);
+
+  List<String> webLinks = [];
+
+  for (final match in matches) {
+    String link = match.group(0)!;
+    if (!link.startsWith("http://") && !link.startsWith("https://")) {
+      // If link doesn't start with 'http://' or 'https://',
+      // check if it starts with 'www.' and add 'http://' before it
+      if (link.startsWith("www.")) {
+        link = "http://" + link;
+      } else {
+        // If link is just domain name without 'www.', add 'http://www.' before it
+        link = "http://www." + link;
+      }
+    }
+    webLinks.add(link);
+  }
+
+  return webLinks;
+}
+
+List<String> _getEmailsFromCaption(String caption) {
+  final RegExp regex = RegExp(
+    r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b',
+    caseSensitive: false,
+  );
+
+  final Iterable<Match> matches = regex.allMatches(caption);
+
+  List<String> emails = [];
+
+  for (final match in matches) {
+    emails.add(match.group(0)!);
+  }
+
+  return emails;
 }

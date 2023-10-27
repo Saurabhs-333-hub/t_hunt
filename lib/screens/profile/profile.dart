@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -9,6 +10,7 @@ import 'package:grock/grock.dart';
 import 'package:http/http.dart' as http;
 import 'package:t_hunt/controllers/auth_controller.dart';
 import 'package:t_hunt/controllers/post_controller.dart';
+import 'package:t_hunt/screens/feed/feedcard.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -268,13 +270,13 @@ class _HomeState extends ConsumerState<Profile>
                           children: [
                             Container(
                               child: ref.watch(postsProvider).when(
-                                    data: (data) {
-                                      if (data.isNotEmpty) {
+                                    data: (post) {
+                                      if (post.isNotEmpty) {
                                         return MasonryGridView.builder(
                                             gridDelegate:
                                                 SliverSimpleGridDelegateWithFixedCrossAxisCount(
                                                     crossAxisCount: 3),
-                                            itemCount: data.length,
+                                            itemCount: post.length,
                                             itemBuilder: (BuildContext context,
                                                 int index) {
                                               return Padding(
@@ -287,7 +289,7 @@ class _HomeState extends ConsumerState<Profile>
                                                         .push(MaterialPageRoute(
                                                       builder: (context) =>
                                                           ImagePage(
-                                                        data: data,
+                                                        data: post,
                                                         initialIndex: index,
                                                         aspectRatio:
                                                             aspectRatio,
@@ -295,107 +297,108 @@ class _HomeState extends ConsumerState<Profile>
                                                     ));
                                                   },
                                                   child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      child: Stack(
-                                                        children: [
-                                                          if (data[index]
-                                                                  .imageLinks
-                                                                  .isNotEmpty &&
-                                                              data[index]
-                                                                      .imageLinks
-                                                                      .length >
-                                                                  1) ...[
-                                                            Stack(children: [
-                                                              Hero(
-                                                                flightShuttleBuilder: (BuildContext flightContext,
-                                                                    Animation<
-                                                                            double>
-                                                                        animation,
-                                                                    HeroFlightDirection
-                                                                        flightDirection,
-                                                                    BuildContext
-                                                                        fromHeroContext,
-                                                                    BuildContext
-                                                                        toHeroContext) {
-                                                                  final Hero
-                                                                      toHero =
-                                                                      toHeroContext
-                                                                              .widget
-                                                                          as Hero;
-                                                                  return RotationTransition(
-                                                                    turns:
-                                                                        animation,
-                                                                    child: toHero
-                                                                        .child,
-                                                                  );
-                                                                },
-                                                                placeholderBuilder:
-                                                                    (context,
-                                                                        size,
-                                                                        widget) {
-                                                                  return Container(
-                                                                    width: size
-                                                                        .width,
-                                                                    height: size
-                                                                        .height,
-                                                                    child:
-                                                                        widget,
-                                                                  );
-                                                                },
-                                                                transitionOnUserGestures:
-                                                                    true,
-                                                                tag:
-                                                                    "${data[index].postid}",
-                                                                child: Image
-                                                                    .network(
-                                                                  data[index]
-                                                                      .imageLinks[0],
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    child: Stack(
+                                                      children: [
+                                                        if (post[index]
+                                                                .imageLinks
+                                                                .isNotEmpty &&
+                                                            post[index]
+                                                                    .imageLinks
+                                                                    .length >
+                                                                1) ...[
+                                                          Stack(children: [
+                                                            Hero(
+                                                              flightShuttleBuilder: (BuildContext flightContext,
+                                                                  Animation<
+                                                                          double>
+                                                                      animation,
+                                                                  HeroFlightDirection
+                                                                      flightDirection,
+                                                                  BuildContext
+                                                                      fromHeroContext,
+                                                                  BuildContext
+                                                                      toHeroContext) {
+                                                                final Hero
+                                                                    toHero =
+                                                                    toHeroContext
+                                                                            .widget
+                                                                        as Hero;
+                                                                return RotationTransition(
+                                                                  turns:
+                                                                      animation,
+                                                                  child: toHero
+                                                                      .child,
+                                                                );
+                                                              },
+                                                              placeholderBuilder:
+                                                                  (context,
+                                                                      size,
+                                                                      widget) {
+                                                                return Container(
+                                                                  width: size
+                                                                      .width,
+                                                                  height: size
+                                                                      .height,
+                                                                  child: widget,
+                                                                );
+                                                              },
+                                                              transitionOnUserGestures:
+                                                                  true,
+                                                              tag:
+                                                                  "${post[index].postid}",
+                                                              child:
+                                                                  Image.network(
+                                                                post[index]
+                                                                    .imageLinks[0],
+                                                                fit: BoxFit
+                                                                    .cover,
                                                               ),
-                                                              Container(
-                                                                width: 30,
-                                                                height: 30,
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            100)),
-                                                                child: Center(
-                                                                  child: Text(data[
-                                                                          index]
-                                                                      .imageLinks
-                                                                      .length
-                                                                      .toString()),
-                                                                ),
-                                                              )
-                                                            ]),
-                                                          ] else if (data[index]
-                                                                  .imageLinks
-                                                                  .isNotEmpty &&
-                                                              data[index]
-                                                                      .imageLinks
-                                                                      .length <
-                                                                  2) ...{
-                                                            Image.network(
-                                                              data[index]
-                                                                  .imageLinks[0],
-                                                              fit: BoxFit.cover,
                                                             ),
-                                                          } else ...{
-                                                            Text(
-                                                                data[index]
-                                                                    .caption,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white)),
-                                                          }
-                                                        ],
-                                                      )),
+                                                            Container(
+                                                              width: 30,
+                                                              height: 30,
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              100)),
+                                                              child: Center(
+                                                                child: Text(post[
+                                                                        index]
+                                                                    .imageLinks
+                                                                    .length
+                                                                    .toString()),
+                                                              ),
+                                                            )
+                                                          ]),
+                                                        ] else if (post[index]
+                                                                .imageLinks
+                                                                .isNotEmpty &&
+                                                            post[index]
+                                                                    .imageLinks
+                                                                    .length <
+                                                                2) ...{
+                                                          Image.network(
+                                                            post[index]
+                                                                .imageLinks[0],
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        } else ...{
+                                                          Text(
+                                                              post[index]
+                                                                  .caption,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white)),
+                                                        }
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
                                               );
                                             });
@@ -552,9 +555,9 @@ class ImagePage extends StatelessWidget {
       double itemHeight = MediaQuery.of(context).size.width / aspectRatio;
       totalHeight += itemHeight;
     }
-
+    double estimatedInitialScrollOffset = initialIndex * (100 / 600);
     ScrollController _scrollController =
-        ScrollController(initialScrollOffset: totalHeight);
+        ScrollController(initialScrollOffset: estimatedInitialScrollOffset);
 
     return Scaffold(
       appBar: AppBar(
@@ -564,46 +567,15 @@ class ImagePage extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: data.length,
-              itemBuilder: (context, index) => Container(
-                child: AspectRatio(
-                  aspectRatio: aspectRatio,
-                  child: Column(
-                    children: [
-                      if (data[index].imageLinks.isNotEmpty)
-                        Hero(
-                          tag: "${data[index].postid}",
-                          child: Image.network(
-                            data[index].imageLinks[0],
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          data[index].caption,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text("Add to Cart"),
-                      ),
-                      Expanded(child: Text(data[index].postid))
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+      body: ListView.builder(
+        controller: _scrollController,
+        itemCount: data.length,
+        itemBuilder: (context, index) => Container(
+          child: SingleChildScrollView(
+              physics: NeverScrollableScrollPhysics(),
+              primary: false,
+              child: PostCard(post: data[index])),
+        ),
       ),
     );
   }

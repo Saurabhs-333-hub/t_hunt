@@ -16,6 +16,8 @@ abstract class IPostAPI {
   FutureEither<Document> sharePost(Postmodel post);
   Future<List<Document>> getDocuments();
   Future<List<Document>> getHashtagDocuments(String hashtag);
+  Future<List<Document>> getWeblinkDocuments(String weblink);
+  Future<List<Document>> getEmailDocuments(String email);
   Future<void> deletePost(Postmodel post, BuildContext context);
 }
 
@@ -52,8 +54,28 @@ class PostAPI implements IPostAPI {
     final documents = await _db.listDocuments(
         databaseId: AppwriteConstants.databaseId,
         collectionId: AppwriteConstants.postCollection,
-        queries: [Query.equal('postType', 'text')]);
+        queries: [Query.search("hashtags", hashtag)]);
+    print(documents.documents);
+    return documents.documents;
+  }
 
+  @override
+  Future<List<Document>> getEmailDocuments(String email) async {
+    final documents = await _db.listDocuments(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.postCollection,
+        queries: [Query.search("emails", email)]);
+    print(documents.documents);
+    return documents.documents;
+  }
+
+  @override
+  Future<List<Document>> getWeblinkDocuments(String weblink) async {
+    final documents = await _db.listDocuments(
+        databaseId: AppwriteConstants.databaseId,
+        collectionId: AppwriteConstants.postCollection,
+        queries: [Query.search("weblinks", weblink)]);
+    print(documents.documents);
     return documents.documents;
   }
 

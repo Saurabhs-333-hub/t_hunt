@@ -9,6 +9,9 @@ import 'package:t_hunt/core/post_type.dart';
 class Postmodel {
   final String caption;
   final List<String> hashtags;
+  final List<String> weblinks;
+  final List<String> emails;
+
   final String link;
   final List<String> imageLinks;
   final String uid;
@@ -27,6 +30,8 @@ class Postmodel {
   Postmodel({
     required this.caption,
     required this.hashtags,
+    required this.weblinks,
+    required this.emails,
     required this.link,
     required this.imageLinks,
     required this.uid,
@@ -46,6 +51,8 @@ class Postmodel {
   Postmodel copyWith({
     String? caption,
     List<String>? hashtags,
+    List<String>? weblinks,
+    List<String>? emails,
     String? link,
     List<String>? imageLinks,
     String? uid,
@@ -64,6 +71,8 @@ class Postmodel {
     return Postmodel(
       caption: caption ?? this.caption,
       hashtags: hashtags ?? this.hashtags,
+      weblinks: weblinks ?? this.weblinks,
+      emails: emails ?? this.emails,
       link: link ?? this.link,
       imageLinks: imageLinks ?? this.imageLinks,
       uid: uid ?? this.uid,
@@ -85,6 +94,8 @@ class Postmodel {
     return <String, dynamic>{
       'caption': caption,
       'hashtags': hashtags,
+      'weblinks': weblinks,
+      'emails': emails,
       'link': link,
       'imageLinks': imageLinks,
       'uid': uid,
@@ -105,6 +116,8 @@ class Postmodel {
     return Postmodel(
       caption: map['caption'] as String,
       hashtags: List<String>.from((map['hashtags'] as List<dynamic>)),
+      weblinks: List<String>.from((map['weblinks'] as List<dynamic>)),
+      emails: List<String>.from((map['emails'] as List<dynamic>)),
       link: map['link'] as String,
       imageLinks: List<String>.from((map['imageLinks'] as List<dynamic>)),
       uid: map['uid'] as String,
@@ -124,7 +137,7 @@ class Postmodel {
 
   @override
   String toString() {
-    return 'Postmodel(caption: $caption, hashtags: $hashtags, link: $link, imageLinks: $imageLinks, uid: $uid, postType: $postType, postedAt: $postedAt, likes: $likes, commentIds: $commentIds, postid: $postid, isActive: $isActive, reShareCount: $reShareCount, imageColor: $imageColor, titleColor: $titleColor, textColor: $textColor, blurhash: $blurhash)';
+    return 'Postmodel(caption: $caption, hashtags: $hashtags, link: $link, imageLinks: $imageLinks, uid: $uid, postType: $postType, postedAt: $postedAt, likes: $likes, commentIds: $commentIds, postid: $postid, isActive: $isActive, reShareCount: $reShareCount, imageColor: $imageColor, titleColor: $titleColor, textColor: $textColor, blurhash: $blurhash, emails: $emails, weblinks: $weblinks)';
   }
 
   @override
@@ -133,6 +146,8 @@ class Postmodel {
 
     return other.caption == caption &&
         listEquals(other.hashtags, hashtags) &&
+        listEquals(other.weblinks, weblinks) &&
+        listEquals(other.emails, emails) &&
         other.link == link &&
         listEquals(other.imageLinks, imageLinks) &&
         other.uid == uid &&
@@ -153,6 +168,8 @@ class Postmodel {
   int get hashCode {
     return caption.hashCode ^
         hashtags.hashCode ^
+        weblinks.hashCode ^
+        emails.hashCode ^
         link.hashCode ^
         imageLinks.hashCode ^
         uid.hashCode ^

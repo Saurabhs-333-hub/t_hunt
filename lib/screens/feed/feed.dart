@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:responsive_screen_utils/responsive_screenutil.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
 import 'package:t_hunt/controllers/post_controller.dart';
 import 'package:t_hunt/screens/feed/feedcard.dart';
@@ -18,41 +19,61 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserDetailsProvider);
 
-    return Scaffold(
-      // backgroundColor: Colors.black,
-      body: Center(
-        child: ref.watch(postsProvider).when(
-            data: (data) {
-              return MasonryGridView.builder(
-                gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                ),
-                physics: BouncingScrollPhysics(
-                  decelerationRate: ScrollDecelerationRate.fast,
-                ),
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      // Text(currentUser.value!.email),
-                      PostCard(post: data[index]),
-                    ],
-                  );
-                },
-                itemCount: data.length,
-              );
-            },
-            error: (e, st) {
-              return Scaffold(
-                body: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(e.toString()),
+    return SafeArea(
+      child: Scaffold(
+        // backgroundColor: Colors.black,
+        body: NestedScrollView(
+          // physics: BouncingScrollPhysics(),
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                expandedHeight: 200,
+              ),
+            ];
+          },
+          body: Container(
+            // height: double.maxFinite,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: ref.watch(postsProvider).when(
+                        data: (data) {
+                          return MasonryGridView.builder(
+                            gridDelegate:
+                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 1,
+                            ),
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  // Text(currentUser.value!.email),
+                                  PostCard(post: data[index]),
+                                ],
+                              );
+                            },
+                            itemCount: data.length,
+                          );
+                        },
+                        error: (e, st) {
+                          return Scaffold(
+                            body: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(e.toString()),
+                              ),
+                            ),
+                          );
+                        },
+                        loading: () => Scaffold(
+                            body: Center(child: CircularProgressIndicator()))),
                   ),
                 ),
-              );
-            },
-            loading: () =>
-                Scaffold(body: Center(child: CircularProgressIndicator()))),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

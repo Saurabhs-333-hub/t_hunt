@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grock/grock.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_screen_utils/responsive_screen_utils.dart';
 import 'package:t_hunt/controllers/adprovider.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
 import 'package:t_hunt/core/export.dart';
@@ -28,7 +29,7 @@ void main() {
           enabled: !kReleaseMode,
           builder: (context) => MyApp()), // Your main app widget
     ),
-  ); 
+  );
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -43,51 +44,55 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(builder: (lightDynamic, darkDynamic) {
-      return MaterialApp(
-        title: 'Flutter Demo',
-        navigatorKey: Grock.navigationKey, // added line
-        scaffoldMessengerKey: Grock.scaffoldMessengerKey,
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // TRY THIS: Try running your application with "flutter run". You'll see
-          // the application has a blue toolbar. Then, without quitting the app,
-          // try changing the seedColor in the colorScheme below to Colors.green
-          // and then invoke "hot reload" (save your changes or press the "hot
-          // reload" button in a Flutter-supported IDE, or press "r" if you used
-          // the command line to start the app).
-          //
-          // Notice that the counter didn't reset back to zero; the application
-          // state is not lost during the reload. To reset the state, use hot
-          // restart instead.
-          //
-          // This works for code too, not just values: Most code changes can be
-          // tested with just a hot reload.
-          colorScheme: lightDynamic,
-          brightness: Brightness.light,
-          useMaterial3: true,
+      return ResponsiveScreenUtilInit(
+        allowFontScaling: true,
+        designSize: Size(360, 690),
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          navigatorKey: Grock.navigationKey, // added line
+          scaffoldMessengerKey: Grock.scaffoldMessengerKey,
+          theme: ThemeData(
+            // This is the theme of your application.
+            //
+            // TRY THIS: Try running your application with "flutter run". You'll see
+            // the application has a blue toolbar. Then, without quitting the app,
+            // try changing the seedColor in the colorScheme below to Colors.green
+            // and then invoke "hot reload" (save your changes or press the "hot
+            // reload" button in a Flutter-supported IDE, or press "r" if you used
+            // the command line to start the app).
+            //
+            // Notice that the counter didn't reset back to zero; the application
+            // state is not lost during the reload. To reset the state, use hot
+            // restart instead.
+            //
+            // This works for code too, not just values: Most code changes can be
+            // tested with just a hot reload.
+            colorScheme: lightDynamic,
+            brightness: Brightness.light,
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: darkDynamic,
+            brightness: Brightness.dark,
+            useMaterial3: true,
+          ),
+          home: ref.watch(currentUserProvider).when(
+              data: (data) {
+                if (data != null) {
+                  print(data.toMap());
+                  return Home();
+                } else {
+                  return LoginPage();
+                }
+              },
+              error: (e, st) {
+                return Dialog(
+                  child: Text(e.toString()),
+                );
+              },
+              loading: () =>
+                  Scaffold(body: Center(child: CircularProgressIndicator()))),
         ),
-        darkTheme: ThemeData(
-          colorScheme: darkDynamic,
-          brightness: Brightness.dark,
-          useMaterial3: true,
-        ),
-        home: ref.watch(currentUserProvider).when(
-            data: (data) {
-              if (data != null) {
-                print(data.toMap());
-                return Home();
-              } else {
-                return LoginPage();
-              }
-            },
-            error: (e, st) {
-              return Dialog(
-                child: Text(e.toString()),
-              );
-            },
-            loading: () =>
-                Scaffold(body: Center(child: CircularProgressIndicator()))),
       );
     });
   }

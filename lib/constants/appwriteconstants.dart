@@ -10,7 +10,7 @@ class AppwriteConstants {
   static const String usersCollectionbackup = '64d948680c567d228d6d';
   static const String usersCollection = '650a76732a0cb490f1c8';
 
-  static const String postCollection = '650a76b012ee29638dfe';
+  static const String postCollection = '650a76b012ee29638dfe';  
   static const String repliesCollection = '648c0efba7239b5a65f7';
 
   static const String fileBucket = '6533a801f247c645744b';

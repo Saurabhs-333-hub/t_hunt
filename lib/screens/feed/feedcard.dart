@@ -8,29 +8,35 @@ import 'package:t_hunt/core/carousel_sliders.dart';
 import 'package:t_hunt/core/hashtags.dart';
 import 'package:t_hunt/models/postmodel.dart';
 
-class PostCard extends ConsumerWidget {
+class PostCard extends ConsumerStatefulWidget {
   final Postmodel post;
   const PostCard({super.key, required this.post});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _PostCardState();
+}
+
+class _PostCardState extends ConsumerState<PostCard> {
+  @override
+  Widget build(BuildContext context) {
     final isLoading = ref.watch(postControllerProvider);
     deletePost() {
       ref
           .read(postControllerProvider.notifier)
-          .deletePost(post: post, context: context);
+          .deletePost(post: widget.post, context: context);
     }
 
-    return ref.watch(userDetailsProvider(post.uid)).when(
+    return ref.watch(userDetailsProvider(widget.post.uid)).when(
       data: (data) {
         return Container(
           child: Column(
             children: [
               Row(
                 children: [
-                  post.imageLinks.isNotEmpty
+                  widget.post.imageLinks.isNotEmpty
                       ? CircleAvatar(
-                          backgroundImage: NetworkImage(post.imageLinks[0]),
+                          backgroundImage:
+                              NetworkImage(widget.post.imageLinks[0]),
                         )
                       : SizedBox.shrink(),
                   Expanded(child: Text(data.email)),
@@ -76,14 +82,23 @@ class PostCard extends ConsumerWidget {
                     )
                   ],
                 )),
-              } else ...{
-                post.imageLinks.isNotEmpty
-                    ? CarouselSliders(post: post)
+              } else ...[
+                widget.post.imageLinks.isNotEmpty
+                    ? CarouselSliders(post: widget.post)
                     : SizedBox.shrink(),
-                HashTagText(
-                    text: post.caption,
-                    textColor: Color.fromARGB(255, 0, 13, 255)),
-              },
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(),
+                    ),
+                    HashTagText(
+                        text: widget.post.caption, textColor: Colors.lightBlue),
+                  ],
+                )
+              ],
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Divider(),

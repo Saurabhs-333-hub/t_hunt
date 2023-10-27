@@ -419,14 +419,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.6"
-  flutter_screenutil:
-    dependency: "direct main"
-    description:
-      name: flutter_screenutil
-      sha256: "8cf100b8e4973dc570b6415a2090b0bfaa8756ad333db46939efc3e774ee100d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.9.0"
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:
@@ -853,6 +845,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  read_more_text:
+    dependency: "direct main"
+    description:
+      name: read_more_text
+      sha256: "769750959f26a71408eb912e1b1e714713f72bf3efcc3f89e53c31b11101376c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
+  responsive_screen_utils:
+    dependency: "direct main"
+    description:
+      name: responsive_screen_utils
+      sha256: "993e2729a6fd00b75deb6291fdc54b4ab13a49ca1dd1fe39357a907badea7ec1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   restart_app:
     dependency: "direct main"
     description:
@@ -861,6 +869,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  rich_readmore:
+    dependency: "direct main"
+    description:
+      name: rich_readmore
+      sha256: "2a2faa0146a587f98a4f054754df4686466f556dc009cae22c47ae4431cdaa3b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.6"
   riverpod:
     dependency: transitive
     description:

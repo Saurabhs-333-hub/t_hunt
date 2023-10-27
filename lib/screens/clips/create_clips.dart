@@ -149,6 +149,26 @@ class _CreateClipsState extends ConsumerState<CreateClips> {
                     ],
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Icon(Icons.info_rounded,
+                          color: Color.fromARGB(255, 255, 208, 0)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Text(
+                        "Please add http:// or https:// before writing your link",
+                        style: TextStyle(
+                            color: const Color.fromARGB(157, 255, 255, 255),
+                            fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
                 if (file.isNotEmpty) ...{
                   Center(
                       child: Padding(
