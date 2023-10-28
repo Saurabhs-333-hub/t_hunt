@@ -31,8 +31,10 @@ class _HomeState extends ConsumerState<Profile>
     fetchproducts();
   }
 
-  void _generatePostCardKeys(List data) {
+  _generatePostCardKeys(List data) {
     postCardKeys = List.generate(data.length, (_) => GlobalKey());
+    setState(() {});
+    return postCardKeys;
   }
 
   Future<Object> fetchproducts() async {
@@ -276,7 +278,8 @@ class _HomeState extends ConsumerState<Profile>
                             Container(
                               child: ref.watch(postsProvider).when(
                                     data: (post) {
-                                      _generatePostCardKeys(post);
+                                      var keys = _generatePostCardKeys(post);
+                                      print(keys);
                                       if (post.isNotEmpty) {
                                         return MasonryGridView.builder(
                                             gridDelegate:
@@ -295,7 +298,8 @@ class _HomeState extends ConsumerState<Profile>
                                                         .push(MaterialPageRoute(
                                                       builder: (context) =>
                                                           ImagePage(
-                                                        postCardKeys: [],
+                                                        postCardKeys:
+                                                            postCardKeys,
                                                         data: post,
                                                         initialIndex: index,
                                                       ),
@@ -445,7 +449,8 @@ class _HomeState extends ConsumerState<Profile>
                                                         .push(MaterialPageRoute(
                                                       builder: (context) =>
                                                           ImagePage(
-                                                        postCardKeys: [],
+                                                        postCardKeys:
+                                                            postCardKeys,
                                                         data: data,
                                                         initialIndex: index,
                                                       ),
@@ -557,7 +562,7 @@ class _ImagePageState extends State<ImagePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late ScrollController _scrollController;
-  late double initialScrollOffset;
+  // late double initialScrollOffset;
   @override
   void initState() {
     super.initState();
@@ -577,7 +582,9 @@ class _ImagePageState extends State<ImagePage>
         );
       }
     });
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _calculateInitialScrollOffset();
+    });
     // Start the animation
     _animationController.forward();
   }
@@ -586,23 +593,31 @@ class _ImagePageState extends State<ImagePage>
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Calculate initial scroll offset when dependencies are available
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _calculateInitialScrollOffset();
     });
   }
 
+  double initialScrollOffset = 0.0;
+
   void _calculateInitialScrollOffset() {
-    if (widget.initialIndex >= 0 && widget.initialIndex < widget.data.length) {
+    if (widget.initialIndex <= widget.data.length) {
       GlobalKey postCardKey = widget.postCardKeys[widget.initialIndex];
+      print(postCardKey.currentContext);
+      print(postCardKey);
       if (postCardKey.currentContext != null) {
         RenderBox renderBox =
             postCardKey.currentContext!.findRenderObject() as RenderBox;
         double postCardPosition = renderBox.localToGlobal(Offset.zero).dy;
+        print(postCardPosition);
         double screenHeight = MediaQuery.of(context).size.height;
 
         // Calculate the initial scroll offset to center the clicked PostCard
-        initialScrollOffset = postCardPosition - (screenHeight / 2);
-        setState(() {}); // Rebuild the widget after setting initialScrollOffset
+        initialScrollOffset = renderBox.size.aspectRatio;
+        print(initialScrollOffset);
+        _scrollController.jumpTo(initialScrollOffset);
+
+        setState(() {});
       }
     }
   }

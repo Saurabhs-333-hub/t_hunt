@@ -18,3 +18,24 @@ extension ConvertPost on String{
     }
   }
 }
+
+enum StoryType {
+  caption('caption'),
+  image('image');
+
+  final String type;
+  const StoryType(this.type);
+}
+
+extension ConvertStory on String {
+  StoryType toStoryType() {
+    switch (this) {
+      case 'caption':
+        return StoryType.caption;
+      case 'image':
+        return StoryType.image;
+      default:
+        return StoryType.caption;
+    }
+  }
+}
