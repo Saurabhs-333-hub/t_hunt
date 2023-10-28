@@ -19,6 +19,7 @@ class PostCard extends ConsumerStatefulWidget {
 class _PostCardState extends ConsumerState<PostCard> {
   @override
   Widget build(BuildContext context) {
+    GlobalKey key = GlobalKey();
     final isLoading = ref.watch(postControllerProvider);
     deletePost() {
       ref
@@ -29,6 +30,7 @@ class _PostCardState extends ConsumerState<PostCard> {
     return ref.watch(userDetailsProvider(widget.post.uid)).when(
       data: (data) {
         return Container(
+          key: key,
           child: Column(
             children: [
               Row(

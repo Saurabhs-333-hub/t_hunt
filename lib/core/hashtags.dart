@@ -85,7 +85,10 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
             style: TextStyle(color: widget.textColor, fontSize: 12),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                Navigator.of(context).push(ModalBottomSheetRoute(
+                showModalBottomSheet(
+                  showDragHandle: true,
+                  useSafeArea: true,
+                  context: context,
                   builder: (context) {
                     return ref.watch(hashtagpostsProvider(element)).when(
                       data: (data) {
@@ -107,7 +110,7 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                     );
                   },
                   isScrollControlled: true,
-                ));
+                );
               }));
       } else if (element.startsWith('www.')) {
         // Add "http://" to URLs starting with "www." if not already a valid link
@@ -135,7 +138,10 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                             onPressed: () {
                               Navigator.of(context).pop();
 
-                              Navigator.of(context).push(ModalBottomSheetRoute(
+                              showModalBottomSheet(
+                                showDragHandle: true,
+                                useSafeArea: true,
+                                context: context,
                                 builder: (context) {
                                   return ref
                                       .watch(weblinkpostsProvider(element))
@@ -160,7 +166,7 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                                   );
                                 },
                                 isScrollControlled: true,
-                              ));
+                              );
                             },
                             child: Text("View Related Posts"))
                       ],
@@ -198,7 +204,10 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                             onPressed: () {
                               Navigator.of(context).pop();
 
-                              Navigator.of(context).push(ModalBottomSheetRoute(
+                              showModalBottomSheet(
+                                showDragHandle: true,
+                                useSafeArea: true,
+                                context: context,
                                 builder: (context) {
                                   return ref
                                       .watch(weblinkpostsProvider(element))
@@ -223,7 +232,7 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                                   );
                                 },
                                 isScrollControlled: true,
-                              ));
+                              );
                             },
                             child: Text("View Related Posts"))
                       ],
@@ -264,7 +273,10 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                             onPressed: () {
                               Navigator.of(context).pop();
 
-                              Navigator.of(context).push(ModalBottomSheetRoute(
+                              showModalBottomSheet(
+                                showDragHandle: true,
+                                useSafeArea: true,
+                                context: context,
                                 builder: (context) {
                                   return ref
                                       .watch(weblinkpostsProvider(element))
@@ -289,7 +301,7 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                                   );
                                 },
                                 isScrollControlled: true,
-                              ));
+                              );
                             },
                             child: Text("View Related Posts"))
                       ],
@@ -334,7 +346,10 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                             onPressed: () {
                               Navigator.of(context).pop();
 
-                              Navigator.of(context).push(ModalBottomSheetRoute(
+                              showModalBottomSheet(
+                                showDragHandle: true,
+                                useSafeArea: true,
+                                context: context,
                                 builder: (context) {
                                   return ref
                                       .watch(emailpostsProvider(element))
@@ -359,7 +374,7 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
                                   );
                                 },
                                 isScrollControlled: true,
-                              ));
+                              );
                             },
                             child: Text("View Related Posts"))
                       ],

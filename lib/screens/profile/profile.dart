@@ -22,12 +22,17 @@ class Profile extends ConsumerStatefulWidget {
 class _HomeState extends ConsumerState<Profile>
     with SingleTickerProviderStateMixin {
   // late TabController _tabController;
+  List<GlobalKey> postCardKeys = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // _tabController = TabController(length: 2, vsync: this);
     fetchproducts();
+  }
+
+  void _generatePostCardKeys(List data) {
+    postCardKeys = List.generate(data.length, (_) => GlobalKey());
   }
 
   Future<Object> fetchproducts() async {
@@ -271,6 +276,7 @@ class _HomeState extends ConsumerState<Profile>
                             Container(
                               child: ref.watch(postsProvider).when(
                                     data: (post) {
+                                      _generatePostCardKeys(post);
                                       if (post.isNotEmpty) {
                                         return MasonryGridView.builder(
                                             gridDelegate:
@@ -289,10 +295,9 @@ class _HomeState extends ConsumerState<Profile>
                                                         .push(MaterialPageRoute(
                                                       builder: (context) =>
                                                           ImagePage(
+                                                        postCardKeys: [],
                                                         data: post,
                                                         initialIndex: index,
-                                                        aspectRatio:
-                                                            aspectRatio,
                                                       ),
                                                     ));
                                                   },
@@ -440,10 +445,9 @@ class _HomeState extends ConsumerState<Profile>
                                                         .push(MaterialPageRoute(
                                                       builder: (context) =>
                                                           ImagePage(
+                                                        postCardKeys: [],
                                                         data: data,
                                                         initialIndex: index,
-                                                        aspectRatio:
-                                                            aspectRatio,
                                                       ),
                                                     ));
                                                   },
@@ -536,47 +540,102 @@ class _HomeState extends ConsumerState<Profile>
   }
 }
 
-class ImagePage extends StatelessWidget {
+class ImagePage extends StatefulWidget {
   final data;
   final int initialIndex;
-  final double aspectRatio; // Aspect ratio of the clicked image
-
+  final List<GlobalKey> postCardKeys;
   ImagePage(
       {required this.data,
       required this.initialIndex,
-      required this.aspectRatio});
+      required this.postCardKeys});
+
+  @override
+  _ImagePageState createState() => _ImagePageState();
+}
+
+class _ImagePageState extends State<ImagePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late ScrollController _scrollController;
+  late double initialScrollOffset;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        // Animation completed, scroll to initial position
+        _scrollController.animateTo(
+          initialScrollOffset,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+
+    // Start the animation
+    _animationController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Calculate initial scroll offset when dependencies are available
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _calculateInitialScrollOffset();
+    });
+  }
+
+  void _calculateInitialScrollOffset() {
+    if (widget.initialIndex >= 0 && widget.initialIndex < widget.data.length) {
+      GlobalKey postCardKey = widget.postCardKeys[widget.initialIndex];
+      if (postCardKey.currentContext != null) {
+        RenderBox renderBox =
+            postCardKey.currentContext!.findRenderObject() as RenderBox;
+        double postCardPosition = renderBox.localToGlobal(Offset.zero).dy;
+        double screenHeight = MediaQuery.of(context).size.height;
+
+        // Calculate the initial scroll offset to center the clicked PostCard
+        initialScrollOffset = postCardPosition - (screenHeight / 2);
+        setState(() {}); // Rebuild the widget after setting initialScrollOffset
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    double totalHeight = 0.0;
-
-    for (int i = 0; i < initialIndex; i++) {
-      // Calculate total height of previous items based on aspect ratio
-      double itemHeight = MediaQuery.of(context).size.width / aspectRatio;
-      totalHeight += itemHeight;
-    }
-    double estimatedInitialScrollOffset = initialIndex * (100 / 600);
-    ScrollController _scrollController =
-        ScrollController(initialScrollOffset: estimatedInitialScrollOffset);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(data[initialIndex].caption),
+        title: Text(widget.data[widget.initialIndex].caption),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: ListView.builder(
-        controller: _scrollController,
-        itemCount: data.length,
-        itemBuilder: (context, index) => Container(
-          child: SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
-              primary: false,
-              child: PostCard(post: data[index])),
-        ),
-      ),
+      body: _scrollController != null
+          ? ListView.builder(
+              controller: _scrollController,
+              itemCount: widget.data.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  key: widget.postCardKeys[index],
+                  child: PostCard(post: widget.data[index]),
+                );
+              },
+            )
+          : Center(child: CircularProgressIndicator()),
     );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 }

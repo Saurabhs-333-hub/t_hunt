@@ -5,7 +5,9 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:responsive_screen_utils/responsive_screenutil.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
 import 'package:t_hunt/controllers/post_controller.dart';
+import 'package:t_hunt/models/usermodel.dart';
 import 'package:t_hunt/screens/feed/feedcard.dart';
+import 'package:t_hunt/screens/feed/feedstory.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -28,11 +30,14 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
             return [
               SliverAppBar(
                 expandedHeight: 200,
+                flexibleSpace: FeedStory(currentUser: currentUser),
+                // backgroundColor: Color.fromARGB(47, 255, 255, 255),
+                elevation: 1,
               ),
             ];
           },
           body: Container(
-            // height: double.maxFinite,
+            height: double.maxFinite,
             child: Column(
               children: [
                 Expanded(
@@ -49,7 +54,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                               return Column(
                                 children: [
                                   // Text(currentUser.value!.email),
-                                  PostCard(post: data[index]),
+                                  PostCard(post: data[index],),
                                 ],
                               );
                             },

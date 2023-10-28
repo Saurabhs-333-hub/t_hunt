@@ -147,8 +147,6 @@ class _CarouselSlidersState extends State<CarouselSliders> {
       }
     }
 
-    
-
     final color = parseColor('Color(0xff681daa)');
     log(color.toString());
     return Stack(
@@ -220,8 +218,8 @@ class _CarouselSlidersState extends State<CarouselSliders> {
                   viewportFraction: 1,
                   enlargeCenterPage: true,
                   enlargeFactor: 1,
-                  // scrollPhysics: BouncingScrollPhysics(
-                  //     decelerationRate: ScrollDecelerationRate.fast),
+                  scrollPhysics: BouncingScrollPhysics(
+                      decelerationRate: ScrollDecelerationRate.fast),
                   pageViewKey: PageStorageKey(widget.post.imageLinks),
                   height: MediaQuery.of(context).size.height * 0.5,
                   onPageChanged: (index, reason) async {
