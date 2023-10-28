@@ -8,7 +8,7 @@ import 'package:t_hunt/core/export.dart';
 import 'package:t_hunt/core/providers.dart';
 import 'package:t_hunt/models/Storymodel.dart';
 
-final StoryAPIProvider = Provider((ref) {
+final storyAPIProvider = Provider((ref) {
   return StoryAPI(ref.watch(appwriteDatabaseProvider));
 });
 

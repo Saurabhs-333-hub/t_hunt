@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:t_hunt/controllers/post_controller.dart';
+import 'package:t_hunt/controllers/story_controller.dart';
 import 'package:t_hunt/models/usermodel.dart';
 import 'package:t_hunt/screens/feed/feedstoryview.dart';
 import 'package:t_hunt/screens/stories/create_stories.dart';
@@ -50,8 +51,21 @@ class FeedStory extends ConsumerWidget {
             ],
           ),
           Flexible(
-              child: ref.watch(postsProvider).when(
+              child: ref.watch(storiesProvider).when(
             data: (data) {
+              if (data.isEmpty) {
+                return Center(
+                  child: IconButton.filledTonal(
+                      onPressed: () {
+                        Navigator.of(context).push(CupertinoPageRoute(
+                          builder: (context) {
+                            return CreateStories();
+                          },
+                        ));
+                      },
+                      icon: Icon(Icons.add_rounded)),
+                );
+              }
               return ListView.builder(
                   physics: BouncingScrollPhysics(
                       decelerationRate: ScrollDecelerationRate.fast),
@@ -248,7 +262,7 @@ class FeedStory extends ConsumerWidget {
                                 ),
                                 Flexible(
                                   child: SizedBox(
-                                      child: Text("${data[index].postid}")),
+                                      child: Text("${data[index].storyid}")),
                                 ),
                               ],
                             ),

@@ -11,6 +11,7 @@ import 'package:grock/grock.dart';
 import 'package:image_picker_plus/image_picker_plus.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
 import 'package:t_hunt/controllers/post_controller.dart';
+import 'package:t_hunt/controllers/story_controller.dart';
 import 'package:t_hunt/core/export.dart';
 import 'package:t_hunt/screens/clips/ads_page.dart';
 import 'package:t_hunt/screens/home/home.dart';
@@ -39,7 +40,7 @@ class _CreateStoriesState extends ConsumerState<CreateStories> {
   }
 
   void sharePost() {
-    ref.read(postControllerProvider.notifier).sharePost(
+    ref.read(storyControllerProvider.notifier).shareStory(
         images: file, caption: captionController.text.trim(), context: context);
   }
 
@@ -52,7 +53,7 @@ class _CreateStoriesState extends ConsumerState<CreateStories> {
   Widget build(BuildContext context) {
     TextEditingController editableTextController = TextEditingController();
     final currentUser = ref.watch(currentUserDetailsProvider);
-    bool isLoading = ref.watch(postControllerProvider);
+    bool isLoading = ref.watch(storyControllerProvider);
     return currentUser.when(
       data: (data) {
         if (isLoading || data == null) {

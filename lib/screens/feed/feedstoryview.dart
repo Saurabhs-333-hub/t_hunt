@@ -7,10 +7,11 @@ import 'package:grock/grock.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:t_hunt/controllers/auth_controller.dart';
 import 'package:t_hunt/core/export.dart';
-import 'package:t_hunt/models/postmodel.dart';
+import 'package:t_hunt/models/Storymodel.dart';
+// import 'package:t_hunt/models/storymodel.dart';
 
 class FeedStoryView extends ConsumerStatefulWidget {
-  final Postmodel story;
+  final Storymodel story;
   FeedStoryView({
     required this.story,
     super.key,
