@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash_plus/flutter_blurhash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grock/grock.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -129,24 +130,49 @@ class _FeedStoryViewState extends ConsumerState<FeedStoryView> {
                           height: MediaQuery.of(context).size.height * 0.8,
                           child: Center(
                             child: widget.story.imageLinks.length > 0
-                                ? Image.network(
-                                    widget.story.imageLinks[index],
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
+                                ? CachedNetworkImage(
+                                    imageUrl: widget.story.imageLinks[index],
+                                    // loadingBuilder:
+                                    //     (context, child, loadingProgress) {
+                                    //   if (loadingProgress == null) return child;
+                                    //   return Center(
+                                    //     child: CircularProgressIndicator(
+                                    //       value: loadingProgress
+                                    //                   .expectedTotalBytes !=
+                                    //               null
+                                    //           ? loadingProgress
+                                    //                   .cumulativeBytesLoaded /
+                                    //               loadingProgress
+                                    //                   .expectedTotalBytes!
+                                    //           : null,
+                                    //     ),
+                                    //   );
+                                    // },
+                                    placeholder: (context, url) => AspectRatio(
+                                      aspectRatio: 1.6,
+                                      child: Center(
+                                        child: SizedBox(
+                                          height: 150,
+                                          width: 150,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
                                         ),
-                                      );
-                                    },
+                                      ),
+                                    ),
+                                    // progressIndicatorBuilder:
+                                    //     (context, url, downloadProgress) => Center(
+                                    //   child: SizedBox(
+                                    //     height: 150,
+                                    //     width: 150,
+                                    //     child: CircularProgressIndicator(
+                                    //       value: downloadProgress.progress,
+                                    //       strokeWidth: 2,
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
                                   )
                                 : Text(
                                     widget.story.caption,

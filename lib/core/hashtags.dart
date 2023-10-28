@@ -394,28 +394,26 @@ class _HashTagTextState extends ConsumerState<HashTagText> {
             style: TextStyle(color: Colors.white, fontSize: 12)));
       }
     });
-    return Expanded(
-      child: GestureDetector(
-        onLongPress: () {
-          _copyToClipboard(widget.text, context);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: RichReadMoreText(
-            settings: LineModeSettings(
-                trimLines: 3,
-                trimCollapsedText: 'more...',
-                trimExpandedText: ' less...',
-                onPressReadMore: () {
-                  /// specific method to be called on press to show more
-                },
-                onPressReadLess: () {
-                  /// specific method to be called on press to show less
-                },
-                moreStyle: TextStyle(color: Colors.lightBlue, fontSize: 12),
-                lessStyle: TextStyle(color: Colors.lightBlue, fontSize: 12)),
-            TextSpan(children: textSpans),
-          ),
+    return GestureDetector(
+      onLongPress: () {
+        _copyToClipboard(widget.text, context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: RichReadMoreText(
+          settings: LineModeSettings(
+              trimLines: 3,
+              trimCollapsedText: 'more...',
+              trimExpandedText: ' less...',
+              onPressReadMore: () {
+                /// specific method to be called on press to show more
+              },
+              onPressReadLess: () {
+                /// specific method to be called on press to show less
+              },
+              moreStyle: TextStyle(color: Colors.lightBlue, fontSize: 12),
+              lessStyle: TextStyle(color: Colors.lightBlue, fontSize: 12)),
+          TextSpan(children: textSpans),
         ),
       ),
     );

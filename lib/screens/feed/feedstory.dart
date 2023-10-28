@@ -81,7 +81,17 @@ class FeedStory extends ConsumerWidget {
                               children: [
                                 Flexible(
                                   child: GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        useSafeArea: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return FeedStoryView(
+                                              story: data[index]);
+                                        },
+                                      );
+                                    },
                                     onLongPress: () {
                                       showDialog(
                                           context: context,
@@ -155,15 +165,21 @@ class FeedStory extends ConsumerWidget {
                                               duration: Duration(seconds: 1),
                                               curve: Curves.easeInOut,
                                               child: CircleAvatar(
-                                                maxRadius: 50,
-                                              )),
-                                          IconButton.outlined(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.add_circle,
-                                                color: Colors.white,
-                                                size: 30,
-                                              ))
+                                                  maxRadius: 50,
+                                                  backgroundImage: data[index]
+                                                          .imageLinks
+                                                          .isNotEmpty
+                                                      ? NetworkImage(
+                                                          data[index]
+                                                              .imageLinks[0],
+                                                        )
+                                                      : NetworkImage(
+                                                          "https://images.unsplash.com/photo-1695726594598-3cc937112d7d?ixid=M3w1MTUzNjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcyNDE3NTd8&ixlib=rb-4.0.3"))),
+                                          Icon(
+                                            Icons.add_circle_outline_rounded,
+                                            color: Colors.white,
+                                            size: 30,
+                                          )
                                         ]),
                                   ),
                                 ),
@@ -181,7 +197,17 @@ class FeedStory extends ConsumerWidget {
                               children: [
                                 Flexible(
                                   child: InkWell(
-                                    onTap: () {},
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        useSafeArea: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return FeedStoryView(
+                                              story: data[index]);
+                                        },
+                                      );
+                                    },
                                     onLongPress: () {
                                       showDialog(
                                           context: context,
@@ -255,8 +281,16 @@ class FeedStory extends ConsumerWidget {
                                               duration: Duration(seconds: 1),
                                               curve: Curves.easeInOut,
                                               child: CircleAvatar(
-                                                maxRadius: 50,
-                                              )),
+                                                  maxRadius: 50,
+                                                  backgroundImage: data[index]
+                                                          .imageLinks
+                                                          .isNotEmpty
+                                                      ? NetworkImage(
+                                                          data[index]
+                                                              .imageLinks[0],
+                                                        )
+                                                      : NetworkImage(
+                                                          "https://images.unsplash.com/photo-1695726594598-3cc937112d7d?ixid=M3w1MTUzNjZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2OTcyNDE3NTd8&ixlib=rb-4.0.3"))),
                                         ]),
                                   ),
                                 ),

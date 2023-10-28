@@ -88,17 +88,24 @@ class _PostCardState extends ConsumerState<PostCard> {
                 widget.post.imageLinks.isNotEmpty
                     ? CarouselSliders(post: widget.post)
                     : SizedBox.shrink(),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircleAvatar(),
-                    ),
-                    HashTagText(
-                        text: widget.post.caption, textColor: Colors.lightBlue),
-                  ],
+                ListTile(
+                  title: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(),
+                      ),
+                      Expanded(
+                        child: Text(
+                          data.email,
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  subtitle: HashTagText(
+                      text: widget.post.caption, textColor: Colors.lightBlue),
                 )
               ],
               Padding(
